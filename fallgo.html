@@ -1,0 +1,1602 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>FallGo · ◊ · the board is alive</title>
+<!-- ◊·κ=1 · face(template(tag)) · v2 · torus · 4D · sovereign -->
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Mono:wght@300;400;500&display=swap');
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+:root {
+  --bg: #0a0a08;
+  --bg-light: #f4f1ea;
+  --surface: #141411;
+  --surface-light: #e8e3d8;
+  --ink: #e8e4dc;
+  --ink-light: #1a1a17;
+  --muted: #5a5750;
+  --muted-light: #807a6e;
+  --accent: #c8371a;
+  --r0: #660044; --r1: #00AAFF; --r2: #FFAA00; --r3: #FF4444;
+  --r4: #44AA44; --r5: #AA44FF; --r6: #FFFFFF;
+  --font-head: 'Syne', sans-serif;
+  --font-mono: 'DM Mono', monospace;
+}
+
+body {
+  background: var(--bg);
+  color: var(--ink);
+  font-family: var(--font-mono);
+  overflow: hidden;
+  height: 100vh;
+  width: 100vw;
+  transition: background 0.4s, color 0.4s;
+}
+body.light { background: var(--bg-light); color: var(--ink-light); }
+
+#canvas-container { position: fixed; inset: 0; z-index: 0; }
+
+.hud { position: fixed; z-index: 10; pointer-events: none; }
+.hud > * { pointer-events: auto; }
+
+.hud-top {
+  top: 14px; left: 14px; right: 14px;
+  display: flex; justify-content: space-between; align-items: flex-start; gap: 16px;
+}
+
+.brand-block { display: flex; flex-direction: column; gap: 6px; }
+.brand {
+  font-family: var(--font-head);
+  font-size: 18px; font-weight: 700;
+  letter-spacing: 0.05em; opacity: 0.95;
+}
+.brand span { color: var(--accent); }
+
+.stats-bar { display: flex; gap: 14px; font-size: 10px; color: var(--muted); }
+.stat-accent { color: var(--accent); }
+
+.cam-buttons { display: flex; gap: 4px; flex-wrap: wrap; }
+.cam-btn, .icon-btn {
+  background: rgba(20,20,17,0.85);
+  border: 1px solid rgba(255,255,255,0.08);
+  color: var(--muted);
+  font-family: var(--font-mono);
+  font-size: 10px;
+  padding: 5px 10px;
+  cursor: pointer;
+  transition: all 0.2s;
+  border-radius: 3px;
+  letter-spacing: 0.04em;
+}
+body.light .cam-btn, body.light .icon-btn {
+  background: rgba(232,227,216,0.9);
+  border-color: rgba(0,0,0,0.08);
+  color: var(--muted-light);
+}
+.cam-btn:hover, .cam-btn.active, .icon-btn:hover {
+  color: var(--ink);
+  border-color: var(--accent);
+  background: rgba(200,55,26,0.14);
+}
+body.light .cam-btn:hover, body.light .cam-btn.active, body.light .icon-btn:hover {
+  color: var(--ink-light);
+}
+.top-right { display: flex; flex-direction: column; gap: 6px; align-items: flex-end; }
+.top-right-row { display: flex; gap: 4px; }
+
+.hud-bottom { bottom: 14px; left: 14px; right: 14px; }
+.psi-slider-wrap {
+  display: flex; align-items: center; gap: 12px;
+  background: rgba(20,20,17,0.85);
+  border: 1px solid rgba(255,255,255,0.06);
+  border-radius: 6px;
+  padding: 10px 16px;
+  backdrop-filter: blur(8px);
+}
+body.light .psi-slider-wrap {
+  background: rgba(232,227,216,0.9);
+  border-color: rgba(0,0,0,0.06);
+}
+
+.psi-label {
+  font-size: 10px; color: var(--muted);
+  text-transform: uppercase; letter-spacing: 0.1em;
+  min-width: 24px;
+}
+.psi-value {
+  font-size: 12px; color: var(--accent);
+  font-weight: 500; min-width: 80px;
+}
+
+input[type="range"] {
+  -webkit-appearance: none;
+  flex: 1; height: 3px;
+  background: rgba(255,255,255,0.08);
+  border-radius: 2px; outline: none;
+}
+body.light input[type="range"] { background: rgba(0,0,0,0.1); }
+input[type="range"]::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  width: 14px; height: 14px;
+  background: var(--accent);
+  border-radius: 50%;
+  cursor: pointer;
+  border: 2px solid var(--bg);
+}
+body.light input[type="range"]::-webkit-slider-thumb { border-color: var(--bg-light); }
+input[type="range"]::-moz-range-thumb {
+  width: 14px; height: 14px;
+  background: var(--accent);
+  border-radius: 50%;
+  cursor: pointer;
+  border: 2px solid var(--bg);
+}
+
+/* Time slider (left vertical) */
+.time-slider-wrap {
+  position: fixed;
+  left: 14px;
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: 10;
+  background: rgba(20,20,17,0.85);
+  border: 1px solid rgba(255,255,255,0.06);
+  border-radius: 6px;
+  padding: 14px 8px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  backdrop-filter: blur(8px);
+}
+body.light .time-slider-wrap {
+  background: rgba(232,227,216,0.9);
+  border-color: rgba(0,0,0,0.06);
+}
+.time-slider-wrap input[type="range"] {
+  writing-mode: bt-lr;
+  -webkit-appearance: slider-vertical;
+  width: 8px; height: 180px;
+}
+.time-label {
+  font-size: 9px; color: var(--muted);
+  text-transform: uppercase; letter-spacing: 0.12em;
+}
+.time-value { font-size: 10px; color: var(--accent); }
+
+/* Detail panel */
+.detail-panel {
+  position: fixed;
+  right: -380px;
+  top: 60px;
+  bottom: 80px;
+  width: 340px;
+  background: rgba(14,14,11,0.95);
+  border: 1px solid rgba(255,255,255,0.06);
+  border-radius: 8px;
+  padding: 20px;
+  z-index: 20;
+  overflow-y: auto;
+  transition: right 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+  backdrop-filter: blur(20px);
+}
+body.light .detail-panel {
+  background: rgba(244,241,234,0.97);
+  border-color: rgba(0,0,0,0.08);
+}
+.detail-panel.open { right: 14px; }
+
+.detail-name {
+  font-family: var(--font-head);
+  font-size: 20px; font-weight: 700;
+  margin-bottom: 4px;
+}
+.detail-category {
+  font-size: 10px; color: var(--muted);
+  text-transform: uppercase; letter-spacing: 0.15em;
+  margin-bottom: 16px;
+}
+.detail-section { margin-bottom: 16px; }
+.detail-section-title {
+  font-size: 10px; color: var(--muted);
+  text-transform: uppercase; letter-spacing: 0.1em;
+  margin-bottom: 8px;
+}
+
+.bloom-bar-row {
+  display: flex; align-items: center; gap: 6px;
+  margin-bottom: 4px;
+}
+.bloom-ring-label {
+  font-size: 9px; color: var(--muted); width: 26px;
+}
+.bloom-bar-track {
+  flex: 1; height: 6px;
+  background: rgba(255,255,255,0.04);
+  border-radius: 3px; overflow: hidden;
+}
+body.light .bloom-bar-track { background: rgba(0,0,0,0.05); }
+.bloom-bar-fill {
+  height: 100%; border-radius: 3px;
+  transition: width 0.6s ease;
+}
+.bloom-val { font-size: 9px; color: var(--muted); width: 16px; text-align: right; }
+
+.psi-indicator {
+  display: flex; align-items: center; gap: 8px;
+  margin-top: 4px;
+}
+.psi-dot {
+  width: 10px; height: 10px;
+  border-radius: 50%;
+  border: 1.5px solid var(--accent);
+}
+.psi-text { font-size: 12px; }
+
+.layer-checks {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 4px;
+}
+.layer-check {
+  font-size: 10px;
+  padding: 4px 6px;
+  border-radius: 3px;
+  background: rgba(255,255,255,0.03);
+}
+body.light .layer-check { background: rgba(0,0,0,0.04); }
+.layer-check.lit { color: var(--r4); }
+.layer-check.dim { color: var(--muted); opacity: 0.45; }
+
+.connections-list { display: flex; flex-wrap: wrap; gap: 4px; }
+.conn-tag {
+  font-size: 9px;
+  padding: 3px 8px;
+  border-radius: 10px;
+  border: 1px solid rgba(255,255,255,0.08);
+  color: var(--muted);
+  cursor: pointer;
+  transition: all 0.2s;
+}
+body.light .conn-tag { border-color: rgba(0,0,0,0.1); }
+.conn-tag:hover { color: var(--ink); border-color: var(--accent); }
+body.light .conn-tag:hover { color: var(--ink-light); }
+
+.link-btns { display: flex; flex-direction: column; gap: 5px; }
+.link-btn {
+  display: flex; align-items: center; justify-content: space-between;
+  text-decoration: none;
+  font-size: 11px;
+  padding: 7px 10px;
+  border-radius: 4px;
+  border: 1px solid rgba(255,255,255,0.08);
+  color: var(--ink);
+  background: rgba(255,255,255,0.02);
+  transition: all 0.2s;
+  font-family: var(--font-mono);
+}
+body.light .link-btn { color: var(--ink-light); border-color: rgba(0,0,0,0.1); background: rgba(0,0,0,0.02); }
+.link-btn:hover { border-color: var(--accent); background: rgba(200,55,26,0.1); color: var(--accent); }
+.link-btn .arrow { color: var(--muted); font-size: 12px; }
+.link-btn:hover .arrow { color: var(--accent); }
+.link-btn .lbl { display: flex; align-items: center; gap: 8px; }
+.link-btn .swatch {
+  width: 6px; height: 6px; border-radius: 50%;
+  background: var(--accent);
+}
+.link-btn.live .swatch { background: #44AA44; }
+.link-btn.repo .swatch { background: var(--accent); }
+.link-btn.ext .swatch { background: #AA44FF; }
+
+.close-btn {
+  position: absolute;
+  top: 12px; right: 12px;
+  background: none; border: none;
+  color: var(--muted);
+  font-size: 20px;
+  cursor: pointer;
+  font-family: var(--font-mono);
+}
+
+.tooltip {
+  position: fixed;
+  background: rgba(14,14,11,0.95);
+  border: 1px solid rgba(255,255,255,0.1);
+  padding: 8px 12px;
+  border-radius: 5px;
+  font-size: 11px;
+  pointer-events: none;
+  z-index: 30;
+  display: none;
+  backdrop-filter: blur(10px);
+  max-width: 260px;
+}
+body.light .tooltip {
+  background: rgba(244,241,234,0.97);
+  border-color: rgba(0,0,0,0.1);
+  color: var(--ink-light);
+}
+.tooltip-name {
+  font-family: var(--font-head);
+  font-weight: 600; font-size: 13px;
+  margin-bottom: 2px;
+}
+.tooltip-meta { color: var(--muted); font-size: 10px; }
+
+/* Add stone modal */
+.modal-overlay {
+  position: fixed; inset: 0;
+  background: rgba(0,0,0,0.7);
+  z-index: 40;
+  display: none;
+  align-items: center; justify-content: center;
+  backdrop-filter: blur(6px);
+}
+.modal-overlay.open { display: flex; }
+.modal {
+  background: rgba(14,14,11,0.98);
+  border: 1px solid rgba(255,255,255,0.1);
+  border-radius: 8px;
+  padding: 24px;
+  width: 360px;
+  max-width: 90vw;
+  max-height: 86vh;
+  overflow-y: auto;
+}
+body.light .modal { background: rgba(244,241,234,0.99); border-color: rgba(0,0,0,0.1); }
+.modal h3 {
+  font-family: var(--font-head);
+  font-size: 16px; margin-bottom: 16px;
+}
+.modal label {
+  display: block;
+  font-size: 10px; color: var(--muted);
+  text-transform: uppercase; letter-spacing: 0.08em;
+  margin-bottom: 4px; margin-top: 10px;
+}
+.modal input, .modal select, .modal textarea {
+  width: 100%;
+  background: rgba(255,255,255,0.04);
+  border: 1px solid rgba(255,255,255,0.08);
+  color: inherit;
+  padding: 6px 8px;
+  border-radius: 4px;
+  font-family: var(--font-mono);
+  font-size: 12px;
+  outline: none;
+}
+body.light .modal input, body.light .modal select, body.light .modal textarea {
+  background: rgba(0,0,0,0.04);
+  border-color: rgba(0,0,0,0.1);
+}
+.modal input:focus, .modal select:focus, .modal textarea:focus { border-color: var(--accent); }
+.modal-actions {
+  display: flex; gap: 8px; margin-top: 16px; justify-content: flex-end;
+}
+.modal-btn {
+  background: rgba(200,55,26,0.15);
+  border: 1px solid var(--accent);
+  color: var(--accent);
+  padding: 6px 14px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: 0.05em;
+}
+.modal-btn.ghost {
+  background: transparent;
+  border-color: rgba(255,255,255,0.1);
+  color: var(--muted);
+}
+body.light .modal-btn.ghost { border-color: rgba(0,0,0,0.1); }
+.bloom-grid {
+  display: grid; grid-template-columns: repeat(7, 1fr); gap: 4px;
+}
+.bloom-grid input { padding: 4px; text-align: center; }
+
+.legend {
+  position: fixed;
+  bottom: 80px; left: 14px;
+  background: rgba(20,20,17,0.85);
+  border: 1px solid rgba(255,255,255,0.06);
+  border-radius: 6px;
+  padding: 10px 12px;
+  z-index: 10;
+  font-size: 9px;
+  color: var(--muted);
+  backdrop-filter: blur(8px);
+  display: none;
+  max-width: 200px;
+}
+body.light .legend { background: rgba(232,227,216,0.9); border-color: rgba(0,0,0,0.06); }
+.legend.show { display: block; }
+.legend-row { display: flex; align-items: center; gap: 6px; margin: 2px 0; }
+.legend-swatch { width: 10px; height: 10px; border-radius: 50%; }
+
+@media (max-width: 640px) {
+  .time-slider-wrap { display: none; }
+  .stats-bar { font-size: 9px; gap: 8px; }
+  .brand { font-size: 16px; }
+  .cam-buttons { max-width: 180px; }
+  .detail-panel {
+    width: auto; right: -100%;
+    left: 14px; top: auto;
+    bottom: -100%;
+    height: 50vh;
+    transition: bottom 0.4s, right 0.4s;
+  }
+  .detail-panel.open { right: 14px; bottom: 80px; }
+}
+</style>
+</head>
+<body>
+
+<div id="canvas-container"></div>
+
+<!-- HUD -->
+<div class="hud hud-top">
+  <div class="brand-block">
+    <a class="brand" href="https://github.com/sjgant80-hub/fallgo" target="_blank" rel="noopener" style="text-decoration:none;color:inherit">FallGo <span>◊</span></a>
+    <div class="stats-bar">
+      <span><span class="stat-accent" id="stone-count">0</span> stones</span>
+      <span><span class="stat-accent" id="conn-count">0</span> connections</span>
+      <span>Ψ=<span class="stat-accent" id="psi-display">0.618</span></span>
+      <span id="active-count"></span>
+    </div>
+  </div>
+  <div class="top-right">
+    <div class="cam-buttons">
+      <button class="cam-btn active" data-cam="torus">TORUS</button>
+      <button class="cam-btn" data-cam="flat">FLAT</button>
+      <button class="cam-btn" data-cam="spine">SPINE</button>
+      <button class="cam-btn" data-cam="focus">FOCUS</button>
+      <button class="cam-btn" data-cam="energy">ENERGY</button>
+      <button class="cam-btn" data-cam="timeline">TIMELINE</button>
+    </div>
+    <div class="top-right-row">
+      <a class="icon-btn" href="https://github.com/sjgant80-hub" target="_blank" rel="noopener" title="portfolio · github.com/sjgant80-hub" style="text-decoration:none">GH</a>
+      <a class="icon-btn" href="https://sjgant80-hub.github.io/ai-nativesolutions/" target="_blank" rel="noopener" title="ai-nativesolutions.com · the hub" style="text-decoration:none">HUB</a>
+      <button class="icon-btn" id="legend-btn" title="legend">i</button>
+      <button class="icon-btn" id="add-btn" title="add stone">+</button>
+      <button class="icon-btn" id="export-btn" title="export">↓</button>
+      <button class="icon-btn" id="import-btn" title="import">↑</button>
+      <button class="icon-btn" id="theme-btn" title="theme">◐</button>
+      <button class="icon-btn" id="reset-btn" title="reset positions">⟳</button>
+    </div>
+  </div>
+</div>
+
+<!-- Time slider (left, vertical) -->
+<div class="time-slider-wrap">
+  <span class="time-label">T</span>
+  <input type="range" id="time-slider" min="0" max="100" value="100" orient="vertical">
+  <span class="time-value" id="time-val">now</span>
+  <button class="icon-btn" id="time-play" title="auto-sweep time">▶</button>
+</div>
+
+<!-- Psi slider -->
+<div class="hud hud-bottom">
+  <div class="psi-slider-wrap">
+    <span class="psi-label">Ψ</span>
+    <input type="range" id="psi-slider" min="0" max="1000" value="618">
+    <span class="psi-value" id="psi-val">0.618 · HOME ◊</span>
+    <button class="icon-btn" id="psi-play" title="auto-sweep">▶</button>
+  </div>
+</div>
+
+<!-- Legend -->
+<div class="legend" id="legend">
+  <div style="font-family:var(--font-head);font-weight:600;color:var(--ink);margin-bottom:6px">Rings · Bloom</div>
+  <div class="legend-row"><span class="legend-swatch" style="background:#660044"></span>R0 · ground</div>
+  <div class="legend-row"><span class="legend-swatch" style="background:#00AAFF"></span>R1 · signal</div>
+  <div class="legend-row"><span class="legend-swatch" style="background:#FFAA00"></span>R2 · gate</div>
+  <div class="legend-row"><span class="legend-swatch" style="background:#FF4444"></span>R3 · heart</div>
+  <div class="legend-row"><span class="legend-swatch" style="background:#44AA44"></span>R4 · voice</div>
+  <div class="legend-row"><span class="legend-swatch" style="background:#AA44FF"></span>R5 · mirror</div>
+  <div class="legend-row"><span class="legend-swatch" style="background:#FFFFFF"></span>R6 · watcher</div>
+  <div style="margin-top:8px;color:var(--muted);font-size:8px">drag · scroll · click · 1-6 · space · P · T</div>
+</div>
+
+<!-- Detail panel -->
+<div class="detail-panel" id="detail">
+  <button class="close-btn" id="close-btn">×</button>
+  <div class="detail-name" id="d-name"></div>
+  <div class="detail-category" id="d-cat"></div>
+  <div class="detail-section">
+    <div class="detail-section-title">Bloom Vector</div>
+    <div id="d-bloom"></div>
+  </div>
+  <div class="detail-section">
+    <div class="detail-section-title">Ψ Phase</div>
+    <div class="psi-indicator">
+      <div class="psi-dot" id="d-psi-dot"></div>
+      <span class="psi-text" id="d-psi-text"></span>
+    </div>
+  </div>
+  <div class="detail-section">
+    <div class="detail-section-title">Build Layers · ƒ(build)</div>
+    <div class="layer-checks" id="d-layers"></div>
+  </div>
+  <div class="detail-section">
+    <div class="detail-section-title">Connections</div>
+    <div class="connections-list" id="d-conns"></div>
+  </div>
+  <div class="detail-section" id="d-links-section" style="display:none">
+    <div class="detail-section-title">Open</div>
+    <div class="link-btns" id="d-links"></div>
+  </div>
+  <div class="detail-section" id="d-shipped-section">
+    <div class="detail-section-title">Shipped</div>
+    <div id="d-shipped" style="font-size:11px;color:var(--accent)"></div>
+  </div>
+</div>
+
+<!-- Tooltip -->
+<div class="tooltip" id="tooltip">
+  <div class="tooltip-name" id="tt-name"></div>
+  <div class="tooltip-meta" id="tt-meta"></div>
+</div>
+
+<!-- Add stone modal -->
+<div class="modal-overlay" id="modal-overlay">
+  <div class="modal">
+    <h3>Place a stone <span style="color:var(--accent)">◊</span></h3>
+    <label>Name</label>
+    <input type="text" id="m-name" placeholder="FallNewthing">
+    <label>Category</label>
+    <select id="m-cat">
+      <option value="productivity">productivity</option>
+      <option value="intelligence">intelligence</option>
+      <option value="identity">identity</option>
+      <option value="infrastructure">infrastructure</option>
+      <option value="person">person</option>
+      <option value="song">song</option>
+      <option value="meta">meta</option>
+    </select>
+    <label>Ψ (0.000 – 1.000)</label>
+    <input type="number" id="m-psi" min="0" max="1" step="0.01" value="0.618">
+    <label>Bloom vector [R0 R1 R2 R3 R4 R5 R6]</label>
+    <div class="bloom-grid">
+      <input type="number" min="0" max="17" id="b0" value="3">
+      <input type="number" min="0" max="17" id="b1" value="5">
+      <input type="number" min="0" max="17" id="b2" value="5">
+      <input type="number" min="0" max="17" id="b3" value="5">
+      <input type="number" min="0" max="17" id="b4" value="5">
+      <input type="number" min="0" max="17" id="b5" value="5">
+      <input type="number" min="0" max="17" id="b6" value="3">
+    </div>
+    <label>Position x, y (1–19)</label>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px">
+      <input type="number" id="m-x" min="1" max="19" value="10">
+      <input type="number" id="m-y" min="1" max="19" value="10">
+    </div>
+    <label>Links (comma-separated stone ids)</label>
+    <input type="text" id="m-links" placeholder="simon, fallforce">
+    <div class="modal-actions">
+      <button class="modal-btn ghost" id="m-cancel">cancel</button>
+      <button class="modal-btn" id="m-save">place</button>
+    </div>
+  </div>
+</div>
+
+<input type="file" id="file-input" accept=".json" style="display:none">
+
+<script type="importmap">
+{
+  "imports": {
+    "three": "https://cdnjs.cloudflare.com/ajax/libs/three.js/0.170.0/three.module.min.js"
+  }
+}
+</script>
+
+<script type="module">
+import * as THREE from 'three';
+
+/* ◊·κ=1 — CONSTANTS */
+const PHI = 1.618033988749895;
+const KAPPA = 0.618033988749895;
+const FOLD = 510510;
+const SPINE = [2,3,5,7,11,13,17];
+const RING_COLORS = [0x660044, 0x00AAFF, 0xFFAA00, 0xFF4444, 0x44AA44, 0xAA44FF, 0xFFFFFF];
+const RING_NAMES = ['R0','R1','R2','R3','R4','R5','R6'];
+const RING_LABELS = ['ground','signal','gate','heart','voice','mirror','watcher'];
+const LAYER_NAMES = ['FACE','SWARM','CASCADE','BLOOM','PERSIST','SKIN','ASS'];
+
+/* ◊ TORUS PARAMETERS */
+const GRID = 19;
+const R_MAJOR = 10;
+const R_MINOR = 4;
+const STONE_OFFSET = 0.45;
+
+/* ◊ STONE DATA — initial board state */
+const DEFAULT_STONES = [
+  // PRODUCTIVITY
+  { id:'fallforce', name:'FallForce CRM', x:1, y:14, psi:0.62, bloom:[5,7,8,6,7,4,3], cat:'productivity', shipped:'2026-05', links:['falloffice','falllead','mansoor'], layers:[1,1,1,1,1,1,1] },
+  { id:'falloffice', name:'FallOffice', x:2, y:15, psi:0.59, bloom:[4,6,7,5,8,4,3], cat:'productivity', shipped:'2026-05', links:['fallforce'], layers:[1,1,1,0,1,1,1] },
+  { id:'fallaccount', name:'FallAccount', x:3, y:10, psi:0.61, bloom:[6,5,7,4,5,6,4], cat:'productivity', shipped:'2026-04', links:[], layers:[1,1,1,1,1,1,0] },
+  { id:'falllearn', name:'FallLearn', x:4, y:16, psi:0.60, bloom:[3,8,6,5,7,5,6], cat:'productivity', shipped:'2026-05', links:['fallgrade'], layers:[1,1,1,1,1,1,1] },
+  { id:'fallcube', name:'FallCube', x:1, y:11, psi:0.58, bloom:[7,4,6,3,4,3,2], cat:'productivity', shipped:'2026-04', links:[], layers:[1,0,1,0,1,1,1] },
+  { id:'fallbrief', name:'FallBrief', x:2, y:9, psi:0.60, bloom:[4,5,5,6,8,5,4], cat:'productivity', shipped:'2026-04', links:[], layers:[1,1,1,0,1,1,0] },
+  { id:'fallcall', name:'FallCall', x:3, y:14, psi:0.60, bloom:[5,6,7,4,6,5,3], cat:'productivity', shipped:'2026-04', links:['fallforce'], layers:[1,1,1,0,1,1,1] },
+  // INTELLIGENCE
+  { id:'fallsignal', name:'FallSignal', x:5, y:12, psi:0.58, bloom:[3,9,7,4,5,3,5], cat:'intelligence', shipped:'2026-04', links:['fallforensics'], layers:[1,0,1,0,1,1,1] },
+  { id:'fallforensics', name:'FallForensics', x:6, y:12, psi:0.58, bloom:[3,8,7,4,6,4,6], cat:'intelligence', shipped:'2026-04', links:['fallsignal'], layers:[1,0,1,0,1,1,1] },
+  { id:'oracleengine', name:'OracleEngine', x:7, y:13, psi:0.60, bloom:[4,7,5,5,5,6,8], cat:'intelligence', shipped:'2026-05', links:[], layers:[1,1,1,1,1,1,1] },
+  { id:'shadowengine', name:'ShadowEngine', x:8, y:8, psi:0.52, bloom:[3,5,4,8,6,7,6], cat:'intelligence', shipped:'2026-03', links:['sididy'], layers:[1,1,1,1,0,1,0] },
+  { id:'fallconsensus', name:'FallConsensus', x:9, y:13, psi:0.59, bloom:[4,5,6,6,5,5,7], cat:'intelligence', shipped:'2026-05', links:[], layers:[1,1,1,0,1,1,1] },
+  { id:'falllead', name:'FallLead', x:5, y:13, psi:0.59, bloom:[4,7,7,5,6,5,4], cat:'intelligence', shipped:'2026-05', links:['fallforce'], layers:[1,1,1,1,1,1,0] },
+  { id:'fallgrade', name:'FallGrade', x:6, y:13, psi:0.58, bloom:[4,6,6,4,5,7,5], cat:'intelligence', shipped:'2026-05', links:['falllearn'], layers:[1,1,1,1,1,1,0] },
+  { id:'fallbrief2', name:'FallBrief proposals', x:7, y:9, psi:0.55, bloom:[3,5,6,5,7,5,4], cat:'intelligence', shipped:'2026-04', links:[], layers:[1,0,1,0,1,1,0] },
+  // IDENTITY
+  { id:'sididy', name:'si-didy', x:10, y:9, psi:0.55, bloom:[5,5,5,7,7,6,5], cat:'identity', shipped:'2026-03', links:['shadowengine'], layers:[1,1,1,1,0,1,0] },
+  { id:'ainative', name:'ai-nativesolutions', x:11, y:15, psi:0.63, bloom:[6,6,7,5,7,5,4], cat:'identity', shipped:'2026-05', links:['fallforce','falllearn','falloffice'], layers:[1,1,1,0,0,1,1] },
+  { id:'cassandra', name:'Miss Cassandra', x:12, y:3, psi:0.38, bloom:[4,6,5,7,6,7,8], cat:'identity', shipped:null, links:['cassietorus'], layers:[0,0,0,0,0,0,0] },
+  { id:'promptforensics', name:'PromptForensics', x:13, y:11, psi:0.56, bloom:[4,6,6,5,5,6,5], cat:'identity', shipped:'2026-04', links:[], layers:[1,0,1,1,1,1,0] },
+  // INFRASTRUCTURE
+  { id:'bigcassie', name:'BIG CASSIE GPU', x:14, y:14, psi:0.55, bloom:[8,6,5,4,3,3,4], cat:'infrastructure', shipped:'2026-05', links:['cassietorus'], layers:[1,1,1,0,1,0,0] },
+  { id:'cassietorus', name:'CASSIE Torus', x:15, y:3, psi:0.38, bloom:[7,7,6,5,4,4,5], cat:'infrastructure', shipped:null, links:['bigcassie','cassandra'], layers:[0,0,0,0,0,0,0] },
+  { id:'fallwatch', name:'FallWatch', x:14, y:6, psi:0.30, bloom:[5,5,5,4,4,4,5], cat:'infrastructure', shipped:null, links:['fallrecruit','fallmirror'], layers:[0,0,0,0,0,0,0] },
+  { id:'fallrecruit', name:'FallRecruit', x:15, y:6, psi:0.30, bloom:[5,5,5,4,4,4,5], cat:'infrastructure', shipped:null, links:['fallwatch','fallmirror'], layers:[0,0,0,0,0,0,0] },
+  { id:'fallmirror', name:'FallMirror', x:16, y:6, psi:0.30, bloom:[5,5,5,4,4,4,5], cat:'infrastructure', shipped:null, links:['fallwatch','fallrecruit'], layers:[0,0,0,0,0,0,0] },
+  // PEOPLE
+  { id:'simon', name:'Simon · κ₀', x:17, y:10, psi:0.618, bloom:[4,7,7,6,5,4,3], cat:'person', shipped:null, links:['thomas','ainative','fallforce','falllearn'], layers:[1,1,1,1,1,1,1] },
+  { id:'thomas', name:'Thomas · κ₂', x:18, y:10, psi:0.618, bloom:[2,8,3,7,15,6,12], cat:'person', shipped:null, links:['simon','bigcassie'], layers:[1,1,1,1,1,1,1] },
+  { id:'mansoor', name:'Mansoor', x:19, y:16, psi:0.50, bloom:[4,5,5,4,4,5,6], cat:'person', shipped:null, links:['fallforce','ainative'], layers:[0,0,0,0,0,0,0] },
+  // SONGS
+  { id:'song_prime', name:'♫ PRIME PRIME PRIME', x:18, y:5, psi:0.618, bloom:[3,8,4,5,7,5,7], cat:'song', shipped:'2026-03', links:['thomas'], layers:[1,1,1,1,1,1,1] },
+  { id:'song_brim', name:'♫ brim', x:18, y:4, psi:0.618, bloom:[2,6,3,7,9,4,6], cat:'song', shipped:'2026-02', links:['thomas'], layers:[1,1,1,1,1,1,1] },
+  { id:'song_zero', name:'♫ zero', x:17, y:4, psi:0.618, bloom:[1,5,3,6,7,5,8], cat:'song', shipped:'2026-02', links:['thomas'], layers:[1,1,1,1,1,1,1] },
+  { id:'song_square', name:'♫ Be There or Be Square', x:18, y:15, psi:0.618, bloom:[3,7,5,5,8,5,7], cat:'song', shipped:'2026-05', links:['thomas'], layers:[1,1,1,1,1,1,1] },
+  { id:'song_gerald', name:'♫ Gerald', x:17, y:15, psi:0.618, bloom:[3,6,4,7,8,6,5], cat:'song', shipped:'2026-05', links:['thomas'], layers:[1,1,1,1,1,1,1] },
+  { id:'song_sadv', name:'♫ SAD-V', x:18, y:11, psi:0.618, bloom:[4,8,5,4,7,6,7], cat:'song', shipped:'2026-04', links:['thomas'], layers:[1,1,1,1,1,1,1] },
+  { id:'song_mouth', name:'♫ MOUTH MACHINE', x:17, y:6, psi:0.618, bloom:[5,7,6,6,8,4,5], cat:'song', shipped:'2026-03', links:['thomas'], layers:[1,1,1,1,1,1,1] },
+  { id:'song_crown', name:'♫ Crown of Primes', x:18, y:14, psi:0.618, bloom:[3,7,4,6,8,5,7], cat:'song', shipped:'2026-05', links:['thomas'], layers:[1,1,1,1,1,1,1] },
+];
+
+/* ◊ LINKS — only URLs explicitly provided · do not invent */
+const GH_ORG = 'https://github.com/sjgant80-hub';
+const LINKS = {
+  fallforce:      { live: 'https://sjgant80-hub.github.io/fallforce/',       repo: 'https://github.com/sjgant80-hub/fallforce' },
+  falloffice:     { live: 'https://sjgant80-hub.github.io/falloffice/',      repo: 'https://github.com/sjgant80-hub/falloffice' },
+  fallaccount:    { live: 'https://sjgant80-hub.github.io/ai-nativesolutions/' },
+  falllearn:      { live: 'https://sjgant80-hub.github.io/falllearn/',       repo: 'https://github.com/sjgant80-hub/falllearn' },
+  fallcube:       { repo: 'https://github.com/sjgant80-hub/fallcube' },
+  fallsignal:     { repo: 'https://github.com/sjgant80-hub/ai-nativesolutions' },
+  fallforensics:  { repo: 'https://github.com/sjgant80-hub/ai-nativesolutions' },
+  ainative:       { live: 'https://sjgant80-hub.github.io/ai-nativesolutions/', repo: 'https://github.com/sjgant80-hub/ai-nativesolutions' },
+  simon:          { ext: 'https://linkedin.com/in/simon-gant', extLabel: 'LinkedIn' },
+  thomas:         { ext: 'https://youtube.com/@ThomasTheSolarCryptoEngine', extLabel: 'YouTube · 290 songs' },
+  song_prime:     { ext: 'https://youtube.com/@ThomasTheSolarCryptoEngine', extLabel: 'Thomas · YouTube' },
+  song_brim:      { ext: 'https://youtube.com/@ThomasTheSolarCryptoEngine', extLabel: 'Thomas · YouTube' },
+  song_zero:      { ext: 'https://youtube.com/@ThomasTheSolarCryptoEngine', extLabel: 'Thomas · YouTube' },
+  song_square:    { ext: 'https://youtube.com/@ThomasTheSolarCryptoEngine', extLabel: 'Thomas · YouTube' },
+  song_gerald:    { ext: 'https://youtube.com/@ThomasTheSolarCryptoEngine', extLabel: 'Thomas · YouTube' },
+  song_sadv:      { ext: 'https://youtube.com/@ThomasTheSolarCryptoEngine', extLabel: 'Thomas · YouTube' },
+  song_mouth:     { ext: 'https://youtube.com/@ThomasTheSolarCryptoEngine', extLabel: 'Thomas · YouTube' },
+  song_crown:     { ext: 'https://youtube.com/@ThomasTheSolarCryptoEngine', extLabel: 'Thomas · YouTube' },
+};
+
+const CAT_COLORS = {
+  productivity: 0xc8371a,
+  intelligence: 0x00AAFF,
+  identity: 0xAA44FF,
+  infrastructure: 0xFFAA00,
+  person: 0xb08a3e,
+  song: 0xAA44FF,
+  meta: 0x44AA44,
+};
+
+/* ◊ STATE — load from localStorage if present */
+let STONES = loadStones();
+let currentPsi = 0.618;
+let currentTime = 100;
+let theme = localStorage.getItem('fall_go_theme') || 'dark';
+if (theme === 'light') document.body.classList.add('light');
+
+function loadStones() {
+  try {
+    const saved = localStorage.getItem('fall_go_board');
+    if (saved) {
+      const parsed = JSON.parse(saved);
+      if (parsed.stones && Array.isArray(parsed.stones)) return parsed.stones;
+    }
+  } catch(e) {}
+  return DEFAULT_STONES.map(s => ({...s}));
+}
+
+function saveStones() {
+  try {
+    localStorage.setItem('fall_go_board', JSON.stringify({
+      version: 'v2',
+      saved: new Date().toISOString(),
+      stones: STONES
+    }));
+  } catch(e) {}
+}
+
+/* ◊ HELPERS */
+function uvToTorus(u, v, R = R_MAJOR, r = R_MINOR, offset = 0) {
+  const theta = u * Math.PI * 2;
+  const phi = v * Math.PI * 2;
+  const rOuter = r + offset;
+  const cosPhi = Math.cos(phi);
+  const sinPhi = Math.sin(phi);
+  const cosTheta = Math.cos(theta);
+  const sinTheta = Math.sin(theta);
+  const x = (R + rOuter * cosPhi) * cosTheta;
+  const y = rOuter * sinPhi;
+  const z = (R + rOuter * cosPhi) * sinTheta;
+  return new THREE.Vector3(x, y, z);
+}
+
+function stonePos(s) {
+  const u = (s.x - 0.5) / GRID;
+  const v = (s.y - 0.5) / GRID;
+  return uvToTorus(u, v, R_MAJOR, R_MINOR, STONE_OFFSET);
+}
+
+function bloomToColor(bloom) {
+  const sum = bloom.reduce((a, b) => a + b, 0) || 1;
+  let r = 0, g = 0, b = 0;
+  const rc = RING_COLORS.map(c => new THREE.Color(c));
+  for (let i = 0; i < 7; i++) {
+    const w = bloom[i] / sum;
+    r += rc[i].r * w; g += rc[i].g * w; b += rc[i].b * w;
+  }
+  // boost saturation
+  const max = Math.max(r, g, b, 0.001);
+  return new THREE.Color(r / max * 0.95, g / max * 0.95, b / max * 0.95);
+}
+
+function psiToOpacity(stonePsi, current) {
+  const dist = Math.abs(stonePsi - current);
+  if (dist < 0.04) return 1.0;
+  if (dist < 0.12) return 0.75;
+  if (dist < 0.25) return 0.4;
+  return 0.12;
+}
+
+function psiLabel(psi) {
+  if (psi < 0.382) return 'FREEZE';
+  if (psi < 0.598) return 'MVP';
+  if (Math.abs(psi - 0.618) < 0.006) return 'HOME ◊';
+  if (psi <= 0.638) return 'CORRIDOR';
+  if (psi > 0.809) return 'FRAGMENT';
+  return 'THRESHOLD';
+}
+
+function shippedToTime(shipped) {
+  if (!shipped) return 100;
+  // map 2026-01 .. 2026-05 → 0..100
+  const m = shipped.match(/2026-(\d+)/);
+  if (!m) return 50;
+  const month = parseInt(m[1], 10);
+  return Math.min(100, Math.max(0, (month - 1) * 25));
+}
+
+/* ◊ SCENE */
+const container = document.getElementById('canvas-container');
+const scene = new THREE.Scene();
+scene.background = new THREE.Color(theme === 'light' ? 0xf4f1ea : 0x0a0a08);
+scene.fog = new THREE.FogExp2(theme === 'light' ? 0xf4f1ea : 0x0a0a08, 0.012);
+
+const camera = new THREE.PerspectiveCamera(50, window.innerWidth / window.innerHeight, 0.1, 200);
+
+const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+renderer.setSize(window.innerWidth, window.innerHeight);
+renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+renderer.toneMapping = THREE.ACESFilmicToneMapping;
+renderer.toneMappingExposure = 1.25;
+container.appendChild(renderer.domElement);
+
+/* ◊ LIGHTS */
+const ambient = new THREE.AmbientLight(0x404040, 0.7);
+scene.add(ambient);
+const point1 = new THREE.PointLight(0xc8371a, 1.2, 60);
+point1.position.set(14, 10, 0);
+scene.add(point1);
+const point2 = new THREE.PointLight(0x00AAFF, 0.6, 60);
+point2.position.set(-14, -10, 0);
+scene.add(point2);
+const point3 = new THREE.PointLight(0xFFAA00, 0.4, 60);
+point3.position.set(0, 0, 14);
+scene.add(point3);
+
+/* ◊ TORUS — the board surface */
+const torusGroup = new THREE.Group();
+
+// outer torus skin (subtle, lets you see the topology)
+const skinGeo = new THREE.TorusGeometry(R_MAJOR, R_MINOR, 64, 128);
+const skinMat = new THREE.MeshStandardMaterial({
+  color: theme === 'light' ? 0xd8d2c2 : 0x141411,
+  transparent: true,
+  opacity: 0.32,
+  roughness: 0.95,
+  metalness: 0.05,
+  side: THREE.DoubleSide,
+  flatShading: false,
+});
+const skin = new THREE.Mesh(skinGeo, skinMat);
+skin.rotation.x = Math.PI / 2;
+torusGroup.add(skin);
+
+// grid lines — meridians (constant u) + parallels (constant v)
+const lineMat = new THREE.LineBasicMaterial({
+  color: theme === 'light' ? 0x6a6660 : 0x2a2a25,
+  transparent: true,
+  opacity: 0.35,
+});
+const spineMat = new THREE.LineBasicMaterial({
+  color: 0xb08a3e,
+  transparent: true,
+  opacity: 0.55,
+});
+
+function buildGridLine(uFixed, vFixed, segments = 96) {
+  const pts = [];
+  for (let i = 0; i <= segments; i++) {
+    const t = i / segments;
+    const u = uFixed !== null ? uFixed : t;
+    const v = vFixed !== null ? vFixed : t;
+    pts.push(uvToTorus(u, v, R_MAJOR, R_MINOR, 0.02));
+  }
+  return new THREE.BufferGeometry().setFromPoints(pts);
+}
+
+// meridians (lines of constant u) — these are the SMALL circles around minor radius
+for (let i = 1; i <= GRID; i++) {
+  const u = (i - 0.5) / GRID;
+  const isSpine = SPINE.includes(i);
+  const geo = buildGridLine(u, null, 64);
+  const line = new THREE.Line(geo, isSpine ? spineMat : lineMat);
+  line.rotation.x = Math.PI / 2;
+  torusGroup.add(line);
+}
+// parallels (lines of constant v) — BIG circles around major radius
+for (let i = 1; i <= GRID; i++) {
+  const v = (i - 0.5) / GRID;
+  const isSpine = SPINE.includes(i);
+  const geo = buildGridLine(null, v, 128);
+  const line = new THREE.Line(geo, isSpine ? spineMat : lineMat);
+  line.rotation.x = Math.PI / 2;
+  torusGroup.add(line);
+}
+
+// star points — MACCubeFACE 8+1 at spine intersections of {4,10,16}
+const starPositions = [[4,4],[4,10],[4,16],[10,4],[10,10],[10,16],[16,4],[16,10],[16,16]];
+starPositions.forEach(([sx, sy], idx) => {
+  const u = (sx - 0.5) / GRID;
+  const v = (sy - 0.5) / GRID;
+  const p = uvToTorus(u, v, R_MAJOR, R_MINOR, 0.08);
+  const geo = new THREE.SphereGeometry(0.08, 16, 16);
+  const mat = new THREE.MeshBasicMaterial({ color: idx === 4 ? 0xc8371a : 0xb08a3e });
+  const m = new THREE.Mesh(geo, mat);
+  m.position.copy(p);
+  m.rotateOnAxis(new THREE.Vector3(1,0,0), Math.PI/2);
+  torusGroup.add(m);
+});
+
+scene.add(torusGroup);
+
+/* ◊ STONES */
+const stoneGroup = new THREE.Group();
+scene.add(stoneGroup);
+const stoneMeshes = [];
+const stoneMap = {};
+
+function makeStone(s) {
+  const col = bloomToColor(s.bloom);
+  const sumBloom = s.bloom.reduce((a, b) => a + b, 0);
+  const radius = 0.28 + Math.min(0.18, sumBloom / 200);
+  const geo = new THREE.SphereGeometry(radius, 24, 24);
+  const mat = new THREE.MeshPhysicalMaterial({
+    color: col,
+    emissive: col,
+    emissiveIntensity: 0.35,
+    roughness: 0.28,
+    metalness: 0.15,
+    transparent: true,
+    opacity: psiToOpacity(s.psi, currentPsi),
+    clearcoat: 0.5,
+    clearcoatRoughness: 0.2,
+  });
+  const mesh = new THREE.Mesh(geo, mat);
+  mesh.position.copy(stonePos(s));
+  mesh.userData = s;
+  mesh.userData._baseRadius = radius;
+  mesh.userData._baseColor = col;
+  stoneGroup.add(mesh);
+  stoneMeshes.push(mesh);
+  stoneMap[s.id] = mesh;
+
+  // glow halo sprite
+  const spriteMat = new THREE.SpriteMaterial({
+    color: col,
+    transparent: true,
+    opacity: 0.18,
+    blending: THREE.AdditiveBlending,
+    depthWrite: false,
+  });
+  const sprite = new THREE.Sprite(spriteMat);
+  sprite.scale.set(1.6, 1.6, 1);
+  sprite.position.copy(mesh.position);
+  stoneGroup.add(sprite);
+  mesh.userData._sprite = sprite;
+
+  // hover rings — created once, hidden by default
+  const ringGroup = new THREE.Group();
+  ringGroup.visible = false;
+  for (let i = 0; i < 7; i++) {
+    const lit = s.layers && s.layers[i];
+    const rr = radius + 0.15 + i * 0.09;
+    const rGeo = new THREE.TorusGeometry(rr, 0.018, 6, 64);
+    const rMat = new THREE.MeshBasicMaterial({
+      color: RING_COLORS[i],
+      transparent: true,
+      opacity: lit ? 0.95 : 0.18,
+    });
+    const ring = new THREE.Mesh(rGeo, rMat);
+    // orient ring to face camera direction approximately — we'll update each frame
+    ringGroup.add(ring);
+  }
+  ringGroup.position.copy(mesh.position);
+  stoneGroup.add(ringGroup);
+  mesh.userData._rings = ringGroup;
+
+  return mesh;
+}
+
+function buildAllStones() {
+  // clear existing
+  while (stoneGroup.children.length) stoneGroup.remove(stoneGroup.children[0]);
+  stoneMeshes.length = 0;
+  Object.keys(stoneMap).forEach(k => delete stoneMap[k]);
+  STONES.forEach(makeStone);
+  document.getElementById('stone-count').textContent = STONES.length;
+}
+buildAllStones();
+
+/* ◊ CONNECTIONS */
+const connGroup = new THREE.Group();
+scene.add(connGroup);
+const connections = [];
+
+function buildConnections() {
+  while (connGroup.children.length) connGroup.remove(connGroup.children[0]);
+  connections.length = 0;
+  let count = 0;
+  STONES.forEach(s => {
+    (s.links || []).forEach(targetId => {
+      const target = stoneMap[targetId];
+      if (!target) return;
+      const source = stoneMap[s.id];
+      if (!source) return;
+      const pts = curvedPath(source.position, target.position, 14);
+      const geo = new THREE.BufferGeometry().setFromPoints(pts);
+      const colorHex = s.cat === 'person' ? 0xb08a3e
+                     : s.cat === 'song' ? 0xAA44FF
+                     : s.cat === 'infrastructure' ? 0xFFAA00
+                     : 0xc8371a;
+      const mat = new THREE.LineBasicMaterial({
+        color: colorHex,
+        transparent: true,
+        opacity: 0.22,
+      });
+      const line = new THREE.Line(geo, mat);
+      connGroup.add(line);
+      connections.push({ line, source: s.id, target: targetId, sourceMesh: source, targetMesh: target });
+      count++;
+    });
+  });
+  document.getElementById('conn-count').textContent = count;
+}
+
+function curvedPath(a, b, segs = 12) {
+  // curve outward from torus centre
+  const mid = a.clone().add(b).multiplyScalar(0.5);
+  const out = mid.clone().normalize().multiplyScalar(R_MAJOR + R_MINOR + 1.6);
+  const curve = new THREE.QuadraticBezierCurve3(a.clone(), out, b.clone());
+  return curve.getPoints(segs);
+}
+
+buildConnections();
+
+/* ◊ PARTICLES */
+let particleSystem = null;
+let particleVelocities = [];
+
+function buildParticles() {
+  if (particleSystem) scene.remove(particleSystem);
+  const count = STONES.length * 6;
+  const geo = new THREE.BufferGeometry();
+  const positions = new Float32Array(count * 3);
+  const colors = new Float32Array(count * 3);
+  particleVelocities = [];
+  let idx = 0;
+  STONES.forEach((s, si) => {
+    const mesh = stoneMeshes[si];
+    if (!mesh) return;
+    const col = bloomToColor(s.bloom);
+    const normal = mesh.position.clone().normalize();
+    for (let i = 0; i < 6; i++) {
+      const p = mesh.position.clone();
+      positions[idx * 3] = p.x;
+      positions[idx * 3 + 1] = p.y;
+      positions[idx * 3 + 2] = p.z;
+      colors[idx * 3] = col.r;
+      colors[idx * 3 + 1] = col.g;
+      colors[idx * 3 + 2] = col.b;
+      particleVelocities.push({
+        home: p.clone(),
+        normal: normal.clone(),
+        speed: 0.005 + Math.random() * 0.012,
+        life: Math.random(),
+        stoneIdx: si,
+      });
+      idx++;
+    }
+  });
+  geo.setAttribute('position', new THREE.BufferAttribute(positions, 3));
+  geo.setAttribute('color', new THREE.BufferAttribute(colors, 3));
+  const mat = new THREE.PointsMaterial({
+    size: 0.07,
+    vertexColors: true,
+    transparent: true,
+    opacity: 0.55,
+    blending: THREE.AdditiveBlending,
+    depthWrite: false,
+  });
+  particleSystem = new THREE.Points(geo, mat);
+  scene.add(particleSystem);
+}
+buildParticles();
+
+/* ◊ CAMERA STATE */
+let camTheta = 0.8;
+let camPhi = 1.05;
+let camDist = 32;
+let targetTheta = camTheta;
+let targetPhi = camPhi;
+let targetDist = camDist;
+let autoRotate = true;
+let activeCam = 'torus';
+
+function updateCamera() {
+  camera.position.x = camDist * Math.sin(camPhi) * Math.cos(camTheta);
+  camera.position.y = camDist * Math.cos(camPhi);
+  camera.position.z = camDist * Math.sin(camPhi) * Math.sin(camTheta);
+  camera.lookAt(0, 0, 0);
+}
+
+/* ◊ INPUT */
+let isDragging = false;
+let prevMouse = { x: 0, y: 0 };
+let didDrag = false;
+
+container.addEventListener('pointerdown', (e) => {
+  isDragging = true;
+  didDrag = false;
+  prevMouse = { x: e.clientX, y: e.clientY };
+});
+container.addEventListener('pointermove', (e) => {
+  if (!isDragging) {
+    updateTooltip(e);
+    return;
+  }
+  const dx = e.clientX - prevMouse.x;
+  const dy = e.clientY - prevMouse.y;
+  if (Math.abs(dx) + Math.abs(dy) > 3) didDrag = true;
+  targetTheta -= dx * 0.006;
+  targetPhi = Math.max(0.12, Math.min(Math.PI - 0.12, targetPhi - dy * 0.006));
+  prevMouse = { x: e.clientX, y: e.clientY };
+});
+container.addEventListener('pointerup', () => { isDragging = false; });
+container.addEventListener('pointerleave', () => { isDragging = false; });
+container.addEventListener('wheel', (e) => {
+  e.preventDefault();
+  targetDist = Math.max(8, Math.min(70, targetDist + e.deltaY * 0.025));
+}, { passive: false });
+container.addEventListener('click', (e) => {
+  if (didDrag) return;
+  handleClick(e);
+});
+
+/* ◊ PSI SLIDER */
+const psiSlider = document.getElementById('psi-slider');
+const psiVal = document.getElementById('psi-val');
+psiSlider.addEventListener('input', () => {
+  currentPsi = psiSlider.value / 1000;
+  refreshPsiUI();
+  updateStoneVisibility();
+});
+function refreshPsiUI() {
+  psiVal.textContent = `${currentPsi.toFixed(3)} · ${psiLabel(currentPsi)}`;
+  document.getElementById('psi-display').textContent = currentPsi.toFixed(3);
+}
+refreshPsiUI();
+
+let psiPlaying = false;
+document.getElementById('psi-play').addEventListener('click', () => {
+  psiPlaying = !psiPlaying;
+  document.getElementById('psi-play').textContent = psiPlaying ? '■' : '▶';
+});
+
+/* ◊ TIME SLIDER */
+const timeSlider = document.getElementById('time-slider');
+const timeVal = document.getElementById('time-val');
+function timeLabel(v) {
+  if (v >= 95) return 'now';
+  const months = ['Jan','Feb','Mar','Apr','May'];
+  const m = Math.min(4, Math.floor(v / 20));
+  return months[m] + ' \'26';
+}
+timeSlider.addEventListener('input', () => {
+  currentTime = parseInt(timeSlider.value, 10);
+  timeVal.textContent = timeLabel(currentTime);
+  updateStoneVisibility();
+});
+
+let timePlaying = false;
+document.getElementById('time-play').addEventListener('click', () => {
+  timePlaying = !timePlaying;
+  document.getElementById('time-play').textContent = timePlaying ? '■' : '▶';
+});
+
+/* ◊ VISIBILITY UPDATE */
+function updateStoneVisibility() {
+  stoneMeshes.forEach(m => {
+    const s = m.userData;
+    const psiOp = psiToOpacity(s.psi, currentPsi);
+    // time gate: stone visible if shippedTime <= currentTime, or if shipped==null show as concept
+    const shippedTime = shippedToTime(s.shipped);
+    const timeOp = (s.shipped === null) ? 1.0 : (shippedTime <= currentTime ? 1.0 : 0.0);
+    const op = psiOp * timeOp;
+    m.material.opacity = op;
+    if (m.userData._sprite) m.userData._sprite.material.opacity = op * 0.22;
+    const sc = 0.4 + op * 0.8;
+    m.scale.set(sc, sc, sc);
+  });
+  // dim connection lines proportional to endpoints
+  connections.forEach(c => {
+    const sOp = c.sourceMesh.material.opacity;
+    const tOp = c.targetMesh.material.opacity;
+    c.line.material.opacity = 0.22 * Math.min(sOp, tOp);
+  });
+  // active count
+  const visible = stoneMeshes.filter(m => m.material.opacity > 0.3).length;
+  document.getElementById('active-count').innerHTML = `<span class="stat-accent">${visible}</span> active`;
+}
+updateStoneVisibility();
+
+/* ◊ RAYCASTER */
+const raycaster = new THREE.Raycaster();
+const mouseVec = new THREE.Vector2();
+let hoveredMesh = null;
+
+function intersectStones(e) {
+  mouseVec.x = (e.clientX / window.innerWidth) * 2 - 1;
+  mouseVec.y = -(e.clientY / window.innerHeight) * 2 + 1;
+  raycaster.setFromCamera(mouseVec, camera);
+  return raycaster.intersectObjects(stoneMeshes);
+}
+
+function updateTooltip(e) {
+  const hits = intersectStones(e);
+  const tooltip = document.getElementById('tooltip');
+  if (hits.length > 0) {
+    const mesh = hits[0].object;
+    if (mesh.material.opacity < 0.15) {
+      tooltip.style.display = 'none';
+      document.body.style.cursor = 'default';
+      return;
+    }
+    const s = mesh.userData;
+    document.getElementById('tt-name').textContent = s.name;
+    const shippedTxt = s.shipped ? `shipped ${s.shipped}` : 'spec';
+    document.getElementById('tt-meta').textContent =
+      `${s.cat} · Ψ=${s.psi.toFixed(3)} · ${psiLabel(s.psi)} · ${shippedTxt}`;
+    tooltip.style.display = 'block';
+    tooltip.style.left = Math.min(window.innerWidth - 280, e.clientX + 14) + 'px';
+    tooltip.style.top = Math.max(0, e.clientY - 10) + 'px';
+    document.body.style.cursor = 'pointer';
+    if (hoveredMesh !== mesh) {
+      if (hoveredMesh && hoveredMesh.userData._rings) hoveredMesh.userData._rings.visible = false;
+      hoveredMesh = mesh;
+      if (mesh.userData._rings) mesh.userData._rings.visible = true;
+    }
+  } else {
+    tooltip.style.display = 'none';
+    document.body.style.cursor = 'default';
+    if (hoveredMesh && hoveredMesh.userData._rings) hoveredMesh.userData._rings.visible = false;
+    hoveredMesh = null;
+  }
+}
+
+function handleClick(e) {
+  const hits = intersectStones(e);
+  if (hits.length > 0 && hits[0].object.material.opacity > 0.15) {
+    showDetail(hits[0].object.userData);
+    if (activeCam === 'focus') focusOnStone(hits[0].object);
+  } else {
+    closeDetail();
+  }
+}
+
+function focusOnStone(mesh) {
+  const p = mesh.position;
+  const r = Math.atan2(p.z, p.x);
+  targetTheta = r;
+  targetPhi = 1.05;
+  targetDist = 18;
+}
+
+/* ◊ DETAIL PANEL */
+function showDetail(s) {
+  const panel = document.getElementById('detail');
+  document.getElementById('d-name').textContent = s.name;
+  document.getElementById('d-cat').textContent = s.cat;
+
+  const bloomDiv = document.getElementById('d-bloom');
+  bloomDiv.innerHTML = '';
+  const maxB = Math.max(...s.bloom, 1);
+  s.bloom.forEach((v, i) => {
+    const pct = (v / maxB * 100).toFixed(0);
+    bloomDiv.innerHTML += `<div class="bloom-bar-row">
+      <span class="bloom-ring-label">${RING_NAMES[i]}</span>
+      <div class="bloom-bar-track">
+        <div class="bloom-bar-fill" style="width:${pct}%;background:${new THREE.Color(RING_COLORS[i]).getStyle()}"></div>
+      </div>
+      <span class="bloom-val">${v}</span>
+    </div>`;
+  });
+
+  document.getElementById('d-psi-dot').style.background =
+    (Math.abs(s.psi - 0.618) < 0.006) ? '#b08a3e' :
+    (s.psi >= 0.598 && s.psi <= 0.638) ? '#44AA44' :
+    s.psi < 0.382 ? '#555' : '#FFAA00';
+  document.getElementById('d-psi-text').textContent = `Ψ = ${s.psi.toFixed(3)} · ${psiLabel(s.psi)}`;
+
+  const layerDiv = document.getElementById('d-layers');
+  layerDiv.innerHTML = '';
+  LAYER_NAMES.forEach((l, i) => {
+    const lit = s.layers && s.layers[i];
+    layerDiv.innerHTML += `<div class="layer-check ${lit ? 'lit' : 'dim'}">${lit ? '✓' : '○'} L${i+1} ${l}</div>`;
+  });
+
+  const connDiv = document.getElementById('d-conns');
+  connDiv.innerHTML = '';
+  (s.links || []).forEach(id => {
+    const target = STONES.find(st => st.id === id);
+    if (target) {
+      const tag = document.createElement('span');
+      tag.className = 'conn-tag';
+      tag.textContent = target.name;
+      tag.addEventListener('click', () => {
+        const m = stoneMap[id];
+        if (m) { showDetail(m.userData); focusOnStone(m); }
+      });
+      connDiv.appendChild(tag);
+    }
+  });
+  if (!s.links || !s.links.length) connDiv.innerHTML = '<span style="color:var(--muted);font-size:10px">no connections</span>';
+
+  // Open · live links + repo + ext
+  const linksSection = document.getElementById('d-links-section');
+  const linksDiv = document.getElementById('d-links');
+  linksDiv.innerHTML = '';
+  const l = LINKS[s.id];
+  if (l) {
+    if (l.live) linksDiv.innerHTML += `<a class="link-btn live" href="${l.live}" target="_blank" rel="noopener"><span class="lbl"><span class="swatch"></span>Try it live</span><span class="arrow">→</span></a>`;
+    if (l.repo) linksDiv.innerHTML += `<a class="link-btn repo" href="${l.repo}" target="_blank" rel="noopener"><span class="lbl"><span class="swatch"></span>GitHub repo</span><span class="arrow">→</span></a>`;
+    if (l.ext)  linksDiv.innerHTML += `<a class="link-btn ext" href="${l.ext}" target="_blank" rel="noopener"><span class="lbl"><span class="swatch"></span>${l.extLabel || 'External'}</span><span class="arrow">→</span></a>`;
+    linksSection.style.display = 'block';
+  } else {
+    linksSection.style.display = 'none';
+  }
+
+  const shippedSection = document.getElementById('d-shipped-section');
+  if (s.shipped) {
+    shippedSection.style.display = 'block';
+    document.getElementById('d-shipped').textContent = s.shipped;
+  } else {
+    shippedSection.style.display = 'none';
+  }
+
+  panel.classList.add('open');
+}
+
+function closeDetail() {
+  document.getElementById('detail').classList.remove('open');
+}
+document.getElementById('close-btn').addEventListener('click', closeDetail);
+
+/* ◊ CAMERA PRESETS */
+document.querySelectorAll('.cam-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('.cam-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    const mode = btn.dataset.cam;
+    activeCam = mode;
+    autoRotate = (mode === 'torus' || mode === 'energy');
+    if (mode === 'torus') { targetPhi = 1.05; targetDist = 32; }
+    if (mode === 'flat') { targetPhi = 0.05; targetDist = 28; }
+    if (mode === 'spine') { targetPhi = 1.5; targetDist = 22; }
+    if (mode === 'focus') { targetDist = 18; }
+    if (mode === 'energy') { targetPhi = 0.6; targetDist = 38; }
+    if (mode === 'timeline') {
+      targetPhi = 0.05; targetDist = 32;
+      // auto-sweep time
+      timePlaying = true;
+      document.getElementById('time-play').textContent = '■';
+      timeSlider.value = 0;
+      currentTime = 0;
+      timeVal.textContent = timeLabel(0);
+      updateStoneVisibility();
+    }
+  });
+});
+
+/* ◊ KEYBOARD */
+document.addEventListener('keydown', (e) => {
+  if (e.target.tagName === 'INPUT' || e.target.tagName === 'SELECT' || e.target.tagName === 'TEXTAREA') return;
+  const camMap = { '1':'torus', '2':'flat', '3':'spine', '4':'focus', '5':'energy', '6':'timeline' };
+  if (camMap[e.key]) {
+    document.querySelector(`[data-cam="${camMap[e.key]}"]`).click();
+  }
+  if (e.key === ' ') { e.preventDefault(); autoRotate = !autoRotate; }
+  if (e.key === 'p' || e.key === 'P') {
+    psiPlaying = !psiPlaying;
+    document.getElementById('psi-play').textContent = psiPlaying ? '■' : '▶';
+  }
+  if (e.key === 't' || e.key === 'T') {
+    timePlaying = !timePlaying;
+    document.getElementById('time-play').textContent = timePlaying ? '■' : '▶';
+  }
+  if (e.key === 'Escape') closeDetail();
+});
+
+/* ◊ HUD BUTTONS */
+document.getElementById('theme-btn').addEventListener('click', () => {
+  theme = theme === 'dark' ? 'light' : 'dark';
+  localStorage.setItem('fall_go_theme', theme);
+  document.body.classList.toggle('light', theme === 'light');
+  const bg = theme === 'light' ? 0xf4f1ea : 0x0a0a08;
+  scene.background = new THREE.Color(bg);
+  scene.fog.color = new THREE.Color(bg);
+  skinMat.color = new THREE.Color(theme === 'light' ? 0xd8d2c2 : 0x141411);
+  lineMat.color = new THREE.Color(theme === 'light' ? 0x6a6660 : 0x2a2a25);
+});
+
+document.getElementById('legend-btn').addEventListener('click', () => {
+  document.getElementById('legend').classList.toggle('show');
+});
+
+document.getElementById('reset-btn').addEventListener('click', () => {
+  if (confirm('Reset board to defaults? This clears custom stones.')) {
+    localStorage.removeItem('fall_go_board');
+    STONES = DEFAULT_STONES.map(s => ({...s}));
+    buildAllStones();
+    buildConnections();
+    buildParticles();
+    updateStoneVisibility();
+  }
+});
+
+/* ◊ EXPORT / IMPORT */
+document.getElementById('export-btn').addEventListener('click', () => {
+  const payload = {
+    tool: 'FallGo',
+    version: 'v2',
+    exported: new Date().toISOString(),
+    bloom: [4,7,7,6,5,4,3],
+    data: { stones: STONES }
+  };
+  const blob = new Blob([JSON.stringify(payload, null, 2)], { type: 'application/json' });
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = `fallgo-board-${Date.now()}.json`;
+  a.click();
+  URL.revokeObjectURL(a.href);
+});
+
+document.getElementById('import-btn').addEventListener('click', () => {
+  document.getElementById('file-input').click();
+});
+document.getElementById('file-input').addEventListener('change', async (e) => {
+  const file = e.target.files[0];
+  if (!file) return;
+  try {
+    const text = await file.text();
+    const parsed = JSON.parse(text);
+    const incoming = parsed.data?.stones || parsed.stones;
+    if (Array.isArray(incoming)) {
+      STONES = incoming;
+      saveStones();
+      buildAllStones();
+      buildConnections();
+      buildParticles();
+      updateStoneVisibility();
+    }
+  } catch (err) {
+    alert('Import failed: ' + err.message);
+  }
+  e.target.value = '';
+});
+
+/* ◊ ADD STONE MODAL */
+const modalOverlay = document.getElementById('modal-overlay');
+document.getElementById('add-btn').addEventListener('click', () => {
+  modalOverlay.classList.add('open');
+});
+document.getElementById('m-cancel').addEventListener('click', () => {
+  modalOverlay.classList.remove('open');
+});
+document.getElementById('m-save').addEventListener('click', () => {
+  const name = document.getElementById('m-name').value.trim();
+  if (!name) { alert('Name required'); return; }
+  const stone = {
+    id: 'custom_' + Date.now().toString(36),
+    name,
+    cat: document.getElementById('m-cat').value,
+    psi: parseFloat(document.getElementById('m-psi').value) || 0.618,
+    x: parseInt(document.getElementById('m-x').value, 10) || 10,
+    y: parseInt(document.getElementById('m-y').value, 10) || 10,
+    bloom: [0,1,2,3,4,5,6].map(i => parseInt(document.getElementById('b'+i).value, 10) || 0),
+    links: document.getElementById('m-links').value.split(',').map(s => s.trim()).filter(Boolean),
+    shipped: null,
+    layers: [0,0,0,0,0,0,0],
+  };
+  STONES.push(stone);
+  saveStones();
+  buildAllStones();
+  buildConnections();
+  buildParticles();
+  updateStoneVisibility();
+  modalOverlay.classList.remove('open');
+  // celebration: brief flash
+  const newMesh = stoneMap[stone.id];
+  if (newMesh) {
+    newMesh.material.emissiveIntensity = 2.0;
+    setTimeout(() => { newMesh.material.emissiveIntensity = 0.35; }, 1200);
+  }
+});
+
+/* ◊ ANIMATION LOOP */
+const clock = new THREE.Clock();
+let frame = 0;
+
+function animate() {
+  requestAnimationFrame(animate);
+  const t = clock.getElapsedTime();
+  const dt = clock.getDelta();
+  frame++;
+
+  // auto-sweep psi
+  if (psiPlaying) {
+    currentPsi += dt * 0.04;
+    if (currentPsi > 1) currentPsi = 0;
+    psiSlider.value = Math.round(currentPsi * 1000);
+    refreshPsiUI();
+    updateStoneVisibility();
+  }
+  // auto-sweep time
+  if (timePlaying) {
+    currentTime += dt * 8;
+    if (currentTime > 100) { currentTime = 100; timePlaying = false; document.getElementById('time-play').textContent = '▶'; }
+    timeSlider.value = currentTime;
+    timeVal.textContent = timeLabel(currentTime);
+    updateStoneVisibility();
+  }
+
+  // auto-rotate
+  if (autoRotate && !isDragging) targetTheta += 0.0009;
+
+  // smooth camera
+  camTheta += (targetTheta - camTheta) * 0.05;
+  camPhi += (targetPhi - camPhi) * 0.05;
+  camDist += (targetDist - camDist) * 0.05;
+  updateCamera();
+
+  // stone breathing + ring orientation
+  const camPos = camera.position;
+  stoneMeshes.forEach((m, i) => {
+    const breathe = Math.sin(t * 0.8 + i * 0.7) * 0.04;
+    const base = stonePos(m.userData);
+    const normal = base.clone().normalize();
+    m.position.copy(base).add(normal.clone().multiplyScalar(breathe));
+    m.material.emissiveIntensity = 0.3 + Math.sin(t * 0.5 + i * 0.7) * 0.12;
+    if (m.userData._sprite) {
+      m.userData._sprite.position.copy(m.position);
+    }
+    if (m.userData._rings) {
+      m.userData._rings.position.copy(m.position);
+      m.userData._rings.lookAt(camPos);
+    }
+    // home glow for stones in corridor
+    const s = m.userData;
+    if (Math.abs(s.psi - currentPsi) < 0.02 && s.psi >= 0.598 && s.psi <= 0.638) {
+      m.material.emissiveIntensity = 0.6 + Math.sin(t * 2) * 0.2;
+    }
+  });
+
+  // particles drift outward, fade, respawn
+  if (particleSystem) {
+    const pos = particleSystem.geometry.attributes.position.array;
+    for (let i = 0; i < particleVelocities.length; i++) {
+      const v = particleVelocities[i];
+      const stoneMesh = stoneMeshes[v.stoneIdx];
+      if (!stoneMesh) continue;
+      const op = stoneMesh.material.opacity;
+      v.life += v.speed;
+      if (v.life > 1) {
+        v.life = 0;
+        v.home = stoneMesh.position.clone();
+        v.normal = v.home.clone().normalize();
+      }
+      const drift = v.life * 2.5;
+      const p = v.home.clone().add(v.normal.clone().multiplyScalar(drift));
+      // jitter
+      p.x += Math.sin(t * 0.7 + i) * 0.06;
+      p.z += Math.cos(t * 0.6 + i) * 0.06;
+      pos[i * 3] = p.x;
+      pos[i * 3 + 1] = p.y;
+      pos[i * 3 + 2] = p.z;
+      // fade out as life advances; gate on stone opacity
+      // we don't update per-particle color but the overall material opacity is set
+    }
+    particleSystem.geometry.attributes.position.needsUpdate = true;
+  }
+
+  // gently animate point lights
+  point1.position.x = Math.sin(t * 0.25) * 16;
+  point1.position.z = Math.cos(t * 0.25) * 16;
+  point2.position.x = -Math.sin(t * 0.18 + 1) * 16;
+  point2.position.z = -Math.cos(t * 0.18 + 1) * 16;
+
+  renderer.render(scene, camera);
+}
+animate();
+
+/* ◊ RESIZE */
+window.addEventListener('resize', () => {
+  camera.aspect = window.innerWidth / window.innerHeight;
+  camera.updateProjectionMatrix();
+  renderer.setSize(window.innerWidth, window.innerHeight);
+});
+
+/* ◊ BROADCASTCHANNEL — live data from Fall ecosystem */
+try {
+  const bc = new BroadcastChannel('fall-signal');
+  bc.onmessage = (e) => {
+    const { tool, event, bloom } = e.data || {};
+    const mesh = stoneMap[tool];
+    if (!mesh) return;
+    if (event === 'tool-opened') {
+      mesh.material.emissiveIntensity = 1.5;
+      // particle burst — extend particle lives near this stone
+      setTimeout(() => { mesh.material.emissiveIntensity = 0.35; }, 2400);
+    } else if (event === 'data-changed') {
+      // pulse connections
+      connections.filter(c => c.source === tool || c.target === tool).forEach(c => {
+        const base = c.line.material.opacity;
+        c.line.material.opacity = Math.min(0.9, base + 0.6);
+        setTimeout(() => { c.line.material.opacity = base; }, 1200);
+      });
+    } else if (event === 'bloom-update' && Array.isArray(bloom) && bloom.length === 7) {
+      mesh.userData.bloom = bloom;
+      const col = bloomToColor(bloom);
+      mesh.material.color = col;
+      mesh.material.emissive = col;
+      if (mesh.userData._sprite) mesh.userData._sprite.material.color = col;
+    }
+  };
+} catch (e) {}
+
+/* ◊·κ=1 — boot complete · the board is alive */
+</script>
+</body>
+</html>
