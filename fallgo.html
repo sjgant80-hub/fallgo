@@ -614,15 +614,18 @@ const STONE_OFFSET = 0.45;
 
 /* ◊ STONE DATA — initial board state */
 const DEFAULT_STONES = [
-  // PRODUCTIVITY
-  { id:'fallforce', name:'FallForce CRM', x:1, y:14, psi:0.62, bloom:[5,7,8,6,7,4,3], cat:'productivity', shipped:'2026-05', links:['falloffice','falllead','mansoor'], layers:[1,1,1,1,1,1,1] },
+  // PRODUCTIVITY (x: 1-7)
+  { id:'fallforce', name:'FallForce CRM', x:1, y:14, psi:0.62, bloom:[5,7,8,6,7,4,3], cat:'productivity', shipped:'2026-05', links:['falloffice','falllead'], layers:[1,1,1,1,1,1,1] },
   { id:'falloffice', name:'FallOffice', x:2, y:15, psi:0.59, bloom:[4,6,7,5,8,4,3], cat:'productivity', shipped:'2026-05', links:['fallforce'], layers:[1,1,1,0,1,1,1] },
   { id:'fallaccount', name:'FallAccount', x:3, y:10, psi:0.61, bloom:[6,5,7,4,5,6,4], cat:'productivity', shipped:'2026-04', links:[], layers:[1,1,1,1,1,1,0] },
   { id:'falllearn', name:'FallLearn', x:4, y:16, psi:0.60, bloom:[3,8,6,5,7,5,6], cat:'productivity', shipped:'2026-05', links:['fallgrade'], layers:[1,1,1,1,1,1,1] },
   { id:'fallcube', name:'FallCube', x:1, y:11, psi:0.58, bloom:[7,4,6,3,4,3,2], cat:'productivity', shipped:'2026-04', links:[], layers:[1,0,1,0,1,1,1] },
   { id:'fallbrief', name:'FallBrief', x:2, y:9, psi:0.60, bloom:[4,5,5,6,8,5,4], cat:'productivity', shipped:'2026-04', links:[], layers:[1,1,1,0,1,1,0] },
   { id:'fallcall', name:'FallCall', x:3, y:14, psi:0.60, bloom:[5,6,7,4,6,5,3], cat:'productivity', shipped:'2026-04', links:['fallforce'], layers:[1,1,1,0,1,1,1] },
-  // INTELLIGENCE
+  { id:'exitengine', name:'ExitEngine', x:4, y:11, psi:0.52, bloom:[3,5,8,5,5,8,4], cat:'productivity', shipped:'2026-04', links:[], layers:[1,0,1,0,1,1,0] },
+  { id:'smbaios', name:'SMBai OS', x:5, y:15, psi:0.58, bloom:[5,6,7,5,6,5,4], cat:'productivity', shipped:'2026-05', links:['fallforce','falloffice'], layers:[1,1,1,0,1,1,0] },
+
+  // INTELLIGENCE (x: 5-9)
   { id:'fallsignal', name:'FallSignal', x:5, y:12, psi:0.58, bloom:[3,9,7,4,5,3,5], cat:'intelligence', shipped:'2026-04', links:['fallforensics'], layers:[1,0,1,0,1,1,1] },
   { id:'fallforensics', name:'FallForensics', x:6, y:12, psi:0.58, bloom:[3,8,7,4,6,4,6], cat:'intelligence', shipped:'2026-04', links:['fallsignal'], layers:[1,0,1,0,1,1,1] },
   { id:'oracleengine', name:'OracleEngine', x:7, y:13, psi:0.60, bloom:[4,7,5,5,5,6,8], cat:'intelligence', shipped:'2026-05', links:[], layers:[1,1,1,1,1,1,1] },
@@ -631,53 +634,81 @@ const DEFAULT_STONES = [
   { id:'falllead', name:'FallLead', x:5, y:13, psi:0.59, bloom:[4,7,7,5,6,5,4], cat:'intelligence', shipped:'2026-05', links:['fallforce'], layers:[1,1,1,1,1,1,0] },
   { id:'fallgrade', name:'FallGrade', x:6, y:13, psi:0.58, bloom:[4,6,6,4,5,7,5], cat:'intelligence', shipped:'2026-05', links:['falllearn'], layers:[1,1,1,1,1,1,0] },
   { id:'fallbrief2', name:'FallBrief proposals', x:7, y:9, psi:0.55, bloom:[3,5,6,5,7,5,4], cat:'intelligence', shipped:'2026-04', links:[], layers:[1,0,1,0,1,1,0] },
-  // IDENTITY
+  { id:'tonesmith', name:'ToneEngine · npm', x:8, y:11, psi:0.58, bloom:[3,5,5,4,9,8,4], cat:'intelligence', shipped:'2026-04', links:[], layers:[1,0,1,0,1,0,0] },
+
+  // IDENTITY (x: 10-13)
   { id:'sididy', name:'si-didy', x:10, y:9, psi:0.55, bloom:[5,5,5,7,7,6,5], cat:'identity', shipped:'2026-03', links:['shadowengine'], layers:[1,1,1,1,0,1,0] },
   { id:'ainative', name:'ai-nativesolutions', x:11, y:15, psi:0.63, bloom:[6,6,7,5,7,5,4], cat:'identity', shipped:'2026-05', links:['fallforce','falllearn','falloffice'], layers:[1,1,1,0,0,1,1] },
   { id:'cassandra', name:'Miss Cassandra', x:12, y:3, psi:0.38, bloom:[4,6,5,7,6,7,8], cat:'identity', shipped:null, links:['cassietorus'], layers:[0,0,0,0,0,0,0] },
   { id:'promptforensics', name:'PromptForensics', x:13, y:11, psi:0.56, bloom:[4,6,6,5,5,6,5], cat:'identity', shipped:'2026-04', links:[], layers:[1,0,1,1,1,1,0] },
-  // INFRASTRUCTURE
+
+  // INFRASTRUCTURE / SOLVER (x: 14-16)
   { id:'bigcassie', name:'BIG CASSIE GPU', x:14, y:14, psi:0.55, bloom:[8,6,5,4,3,3,4], cat:'infrastructure', shipped:'2026-05', links:['cassietorus'], layers:[1,1,1,0,1,0,0] },
-  { id:'cassietorus', name:'CASSIE Torus', x:15, y:3, psi:0.38, bloom:[7,7,6,5,4,4,5], cat:'infrastructure', shipped:null, links:['bigcassie','cassandra'], layers:[0,0,0,0,0,0,0] },
-  { id:'fallwatch', name:'FallWatch', x:14, y:6, psi:0.30, bloom:[5,5,5,4,4,4,5], cat:'infrastructure', shipped:null, links:['fallrecruit','fallmirror'], layers:[0,0,0,0,0,0,0] },
-  { id:'fallrecruit', name:'FallRecruit', x:15, y:6, psi:0.30, bloom:[5,5,5,4,4,4,5], cat:'infrastructure', shipped:null, links:['fallwatch','fallmirror'], layers:[0,0,0,0,0,0,0] },
-  { id:'fallmirror', name:'FallMirror', x:16, y:6, psi:0.30, bloom:[5,5,5,4,4,4,5], cat:'infrastructure', shipped:null, links:['fallwatch','fallrecruit'], layers:[0,0,0,0,0,0,0] },
-  // PEOPLE
-  { id:'simon', name:'Simon · κ₀', x:17, y:10, psi:0.618, bloom:[4,7,7,6,5,4,3], cat:'person', shipped:null, links:['thomas','ainative','fallforce','falllearn'], layers:[1,1,1,1,1,1,1] },
-  { id:'thomas', name:'Thomas · κ₂', x:18, y:10, psi:0.618, bloom:[2,8,3,7,15,6,12], cat:'person', shipped:null, links:['simon','bigcassie'], layers:[1,1,1,1,1,1,1] },
-  { id:'mansoor', name:'Mansoor', x:19, y:16, psi:0.50, bloom:[4,5,5,4,4,5,6], cat:'person', shipped:null, links:['fallforce','ainative'], layers:[0,0,0,0,0,0,0] },
-  // SONGS
-  { id:'song_prime', name:'♫ PRIME PRIME PRIME', x:18, y:5, psi:0.618, bloom:[3,8,4,5,7,5,7], cat:'song', shipped:'2026-03', links:['thomas'], layers:[1,1,1,1,1,1,1] },
-  { id:'song_brim', name:'♫ brim', x:18, y:4, psi:0.618, bloom:[2,6,3,7,9,4,6], cat:'song', shipped:'2026-02', links:['thomas'], layers:[1,1,1,1,1,1,1] },
-  { id:'song_zero', name:'♫ zero', x:17, y:4, psi:0.618, bloom:[1,5,3,6,7,5,8], cat:'song', shipped:'2026-02', links:['thomas'], layers:[1,1,1,1,1,1,1] },
-  { id:'song_square', name:'♫ Be There or Be Square', x:18, y:15, psi:0.618, bloom:[3,7,5,5,8,5,7], cat:'song', shipped:'2026-05', links:['thomas'], layers:[1,1,1,1,1,1,1] },
-  { id:'song_gerald', name:'♫ Gerald', x:17, y:15, psi:0.618, bloom:[3,6,4,7,8,6,5], cat:'song', shipped:'2026-05', links:['thomas'], layers:[1,1,1,1,1,1,1] },
-  { id:'song_sadv', name:'♫ SAD-V', x:18, y:11, psi:0.618, bloom:[4,8,5,4,7,6,7], cat:'song', shipped:'2026-04', links:['thomas'], layers:[1,1,1,1,1,1,1] },
-  { id:'song_mouth', name:'♫ MOUTH MACHINE', x:17, y:6, psi:0.618, bloom:[5,7,6,6,8,4,5], cat:'song', shipped:'2026-03', links:['thomas'], layers:[1,1,1,1,1,1,1] },
-  { id:'song_crown', name:'♫ Crown of Primes', x:18, y:14, psi:0.618, bloom:[3,7,4,6,8,5,7], cat:'song', shipped:'2026-05', links:['thomas'], layers:[1,1,1,1,1,1,1] },
+  { id:'cassietorus', name:'CASSIE Torus', x:15, y:3, psi:0.42, bloom:[7,7,6,5,4,4,5], cat:'infrastructure', shipped:'2026-05', links:['bigcassie','cassandra'], layers:[1,0,1,0,0,0,0] },
+  { id:'fallwatch', name:'FallWatch', x:14, y:6, psi:0.30, bloom:[5,5,5,4,4,4,5], cat:'infrastructure', shipped:null, links:['fallrecruit','fallmirror','fall127'], layers:[0,0,0,0,0,0,0] },
+  { id:'fallrecruit', name:'FallRecruit', x:15, y:6, psi:0.30, bloom:[5,5,5,4,4,4,5], cat:'infrastructure', shipped:null, links:['fallwatch','fallmirror','fall127'], layers:[0,0,0,0,0,0,0] },
+  { id:'fallmirror', name:'FallMirror', x:16, y:6, psi:0.30, bloom:[5,5,5,4,4,4,5], cat:'infrastructure', shipped:null, links:['fallwatch','fallrecruit','fall127'], layers:[0,0,0,0,0,0,0] },
+  { id:'fall127', name:'Fall127 Agents', x:15, y:8, psi:0.50, bloom:[4,9,5,4,8,5,7], cat:'infrastructure', shipped:'2026-05', links:['fallwatch','fallrecruit','fallmirror'], layers:[1,1,1,0,1,0,0] },
+
+  // RESEARCH / PRIOR ART (x: 17-18)
+  { id:'thrl', name:'THRL · Toroidal Harmonic', x:17, y:14, psi:0.48, bloom:[9,6,4,3,7,3,4], cat:'meta', shipped:'2026-04', links:['kbraid'], layers:[0,0,0,0,0,0,0] },
+  { id:'mca', name:'MCA · Mycelial Cognition', x:18, y:13, psi:0.48, bloom:[4,8,4,4,5,9,5], cat:'meta', shipped:'2026-04', links:[], layers:[0,0,0,0,0,0,0] },
+  { id:'osdb', name:'OSDB · Diagnostic Braid', x:18, y:7, psi:0.50, bloom:[3,9,6,4,4,5,8], cat:'meta', shipped:'2026-04', links:[], layers:[0,0,0,0,0,0,0] },
+  { id:'tilattice', name:'TI Lattice · Thermo', x:17, y:11, psi:0.45, bloom:[8,4,5,4,4,4,7], cat:'meta', shipped:'2026-04', links:[], layers:[0,0,0,0,0,0,0] },
+  { id:'policyphi', name:'Policy-Phi-Fighter', x:18, y:9, psi:0.55, bloom:[3,5,6,8,9,4,5], cat:'meta', shipped:'2026-04', links:[], layers:[1,0,1,0,0,1,0] },
+  { id:'mesh127', name:'Stigmergic Mesh', x:17, y:8, psi:0.45, bloom:[4,5,5,4,5,8,9], cat:'meta', shipped:'2026-04', links:['fall127'], layers:[0,0,0,0,0,0,0] },
+  { id:'kbraid', name:'Kinetic Braid', x:17, y:13, psi:0.45, bloom:[9,7,4,3,4,3,5], cat:'meta', shipped:'2026-04', links:['thrl'], layers:[0,0,0,0,0,0,0] },
+
+  // PEOPLE (x: 19)
+  { id:'simon', name:'Simon · κ₀', x:19, y:10, psi:0.618, bloom:[4,7,7,6,5,4,3], cat:'person', shipped:null, links:['thomas','ainative','fallforce','falllearn','fallgo'], layers:[1,1,1,1,1,1,1] },
+  { id:'thomas', name:'Thomas · κ₂', x:19, y:11, psi:0.618, bloom:[2,8,3,7,15,6,12], cat:'person', shipped:null, links:['simon','bigcassie'], layers:[1,1,1,1,1,1,1] },
+
+  // META — the board itself
+  { id:'fallgo', name:'FallGo · ◊', x:19, y:13, psi:0.60, bloom:[3,5,5,4,7,8,8], cat:'meta', shipped:'2026-05', links:['simon','ainative'], layers:[1,1,1,1,1,1,1] },
 ];
 
-/* ◊ LINKS — only URLs explicitly provided · do not invent */
+/* ◊ LINKS — every confirmed repo + live Pages URL */
 const GH_ORG = 'https://github.com/sjgant80-hub';
 const LINKS = {
+  // Sovereign tools — live + repo
   fallforce:      { live: 'https://sjgant80-hub.github.io/fallforce/',       repo: 'https://github.com/sjgant80-hub/fallforce' },
   falloffice:     { live: 'https://sjgant80-hub.github.io/falloffice/',      repo: 'https://github.com/sjgant80-hub/falloffice' },
   fallaccount:    { live: 'https://sjgant80-hub.github.io/ai-nativesolutions/' },
   falllearn:      { live: 'https://sjgant80-hub.github.io/falllearn/',       repo: 'https://github.com/sjgant80-hub/falllearn' },
   fallcube:       { repo: 'https://github.com/sjgant80-hub/fallcube' },
-  fallsignal:     { repo: 'https://github.com/sjgant80-hub/ai-nativesolutions' },
-  fallforensics:  { repo: 'https://github.com/sjgant80-hub/ai-nativesolutions' },
+  fallcall:       { live: 'https://sjgant80-hub.github.io/fallcall/',        repo: 'https://github.com/sjgant80-hub/fallcall' },
+  exitengine:     { repo: 'https://github.com/sjgant80-hub/exitengine' },
+  smbaios:        { live: 'https://sjgant80-hub.github.io/smbaios/',         repo: 'https://github.com/sjgant80-hub/smbaios' },
+  fallsignal:     { live: 'https://sjgant80-hub.github.io/fallsignal/',      repo: 'https://github.com/sjgant80-hub/fallsignal' },
+  fallforensics:  { live: 'https://sjgant80-hub.github.io/fallforensics/',   repo: 'https://github.com/sjgant80-hub/fallforensics' },
+  oracleengine:   { live: 'https://sjgant80-hub.github.io/oracleengine/',    repo: 'https://github.com/sjgant80-hub/oracleengine' },
+  fallconsensus:  { live: 'https://sjgant80-hub.github.io/fallconsensus/',   repo: 'https://github.com/sjgant80-hub/fallconsensus' },
+  falllead:       { live: 'https://sjgant80-hub.github.io/falllead/',        repo: 'https://github.com/sjgant80-hub/falllead' },
+  fallgrade:      { live: 'https://sjgant80-hub.github.io/fallgrade/',       repo: 'https://github.com/sjgant80-hub/fallgrade' },
+  tonesmith:      { repo: 'https://github.com/sjgant80-hub/tonesmith' },
+
+  // Identity / hub
   ainative:       { live: 'https://sjgant80-hub.github.io/ai-nativesolutions/', repo: 'https://github.com/sjgant80-hub/ai-nativesolutions' },
+
+  // Infrastructure / solver / agents
+  cassietorus:    { live: 'https://sjgant80-hub.github.io/cassietorusbtc135solver/', repo: 'https://github.com/sjgant80-hub/cassietorusbtc135solver' },
+  fall127:        { live: 'https://sjgant80-hub.github.io/fall127agents/',   repo: 'https://github.com/sjgant80-hub/fall127agents' },
+
+  // Research / prior art
+  thrl:           { repo: 'https://github.com/sjgant80-hub/fuzzy-palm-tree', ext: 'https://github.com/sjgant80-hub/legendary-journey', extLabel: 'THRL · prior art' },
+  mca:            { repo: 'https://github.com/sjgant80-hub/solid-fiesta',    ext: 'https://github.com/sjgant80-hub/solid-journey',     extLabel: 'MCA · Spore 001' },
+  osdb:           { repo: 'https://github.com/sjgant80-hub/congenial-giggle', ext: 'https://github.com/sjgant80-hub/probable-telegram', extLabel: 'Diagnostic Braid' },
+  tilattice:      { repo: 'https://github.com/sjgant80-hub/probable-octo-chainsaw', ext: 'https://github.com/sjgant80-hub/scaling-octo-couscous', extLabel: 'TI Lattice · twin' },
+  policyphi:      { repo: 'https://github.com/sjgant80-hub/upgraded-fiesta' },
+  mesh127:        { repo: 'https://github.com/sjgant80-hub/laughing-octo-guacamole' },
+  kbraid:         { repo: 'https://github.com/sjgant80-hub/kinetic-braid-prior-art' },
+
+  // Board itself
+  fallgo:         { live: 'https://sjgant80-hub.github.io/fallgo/',          repo: 'https://github.com/sjgant80-hub/fallgo' },
+
+  // People
   simon:          { ext: 'https://linkedin.com/in/simon-gant', extLabel: 'LinkedIn' },
   thomas:         { ext: 'https://youtube.com/@ThomasTheSolarCryptoEngine', extLabel: 'YouTube · 290 songs' },
-  song_prime:     { ext: 'https://youtube.com/@ThomasTheSolarCryptoEngine', extLabel: 'Thomas · YouTube' },
-  song_brim:      { ext: 'https://youtube.com/@ThomasTheSolarCryptoEngine', extLabel: 'Thomas · YouTube' },
-  song_zero:      { ext: 'https://youtube.com/@ThomasTheSolarCryptoEngine', extLabel: 'Thomas · YouTube' },
-  song_square:    { ext: 'https://youtube.com/@ThomasTheSolarCryptoEngine', extLabel: 'Thomas · YouTube' },
-  song_gerald:    { ext: 'https://youtube.com/@ThomasTheSolarCryptoEngine', extLabel: 'Thomas · YouTube' },
-  song_sadv:      { ext: 'https://youtube.com/@ThomasTheSolarCryptoEngine', extLabel: 'Thomas · YouTube' },
-  song_mouth:     { ext: 'https://youtube.com/@ThomasTheSolarCryptoEngine', extLabel: 'Thomas · YouTube' },
-  song_crown:     { ext: 'https://youtube.com/@ThomasTheSolarCryptoEngine', extLabel: 'Thomas · YouTube' },
 };
 
 const CAT_COLORS = {
