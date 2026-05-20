@@ -644,7 +644,7 @@ const DEFAULT_STONES = [
 
   // INFRASTRUCTURE / SOLVER (x: 14-16)
   { id:'bigcassie', name:'BIG CASSIE GPU', x:14, y:14, psi:0.55, bloom:[8,6,5,4,3,3,4], cat:'infrastructure', shipped:'2026-05', links:['cassietorus'], layers:[1,1,1,0,1,0,0] },
-  { id:'cassietorus', name:'CASSIE Torus', x:15, y:3, psi:0.42, bloom:[7,7,6,5,4,4,5], cat:'infrastructure', shipped:'2026-05', links:['bigcassie','cassandra'], layers:[1,0,1,0,0,0,0] },
+  { id:'cassietorus', name:'CASSIE Torus · v2 · Matryoshka', x:15, y:3, psi:0.58, bloom:[7,7,6,5,5,8,9], cat:'infrastructure', shipped:'2026-05', links:['bigcassie','cassandra','fallconsensus'], layers:[1,1,1,1,0,1,1] },
   { id:'fallwatch', name:'FallWatch', x:14, y:6, psi:0.30, bloom:[5,5,5,4,4,4,5], cat:'infrastructure', shipped:null, links:['fallrecruit','fallmirror','fall127'], layers:[0,0,0,0,0,0,0] },
   { id:'fallrecruit', name:'FallRecruit', x:15, y:6, psi:0.30, bloom:[5,5,5,4,4,4,5], cat:'infrastructure', shipped:null, links:['fallwatch','fallmirror','fall127'], layers:[0,0,0,0,0,0,0] },
   { id:'fallmirror', name:'FallMirror', x:16, y:6, psi:0.30, bloom:[5,5,5,4,4,4,5], cat:'infrastructure', shipped:null, links:['fallwatch','fallrecruit','fall127'], layers:[0,0,0,0,0,0,0] },
@@ -662,16 +662,6 @@ const DEFAULT_STONES = [
   // PEOPLE (x: 19)
   { id:'simon', name:'Simon · κ₀', x:19, y:10, psi:0.618, bloom:[4,7,7,6,5,4,3], cat:'person', shipped:null, links:['thomas','ainative','fallforce','falllearn','fallgo'], layers:[1,1,1,1,1,1,1] },
   { id:'thomas', name:'Thomas · κ₂', x:19, y:11, psi:0.618, bloom:[2,8,3,7,15,6,12], cat:'person', shipped:null, links:['simon','bigcassie'], layers:[1,1,1,1,1,1,1] },
-
-  // SONGS (Thomas catalogue)
-  { id:'song_prime', name:'♫ PRIME PRIME PRIME', x:18, y:5, psi:0.618, bloom:[3,8,4,5,7,5,7], cat:'song', shipped:'2026-03', links:['thomas'], layers:[1,1,1,1,1,1,1] },
-  { id:'song_brim', name:'♫ brim', x:18, y:4, psi:0.618, bloom:[2,6,3,7,9,4,6], cat:'song', shipped:'2026-02', links:['thomas'], layers:[1,1,1,1,1,1,1] },
-  { id:'song_zero', name:'♫ zero', x:17, y:4, psi:0.618, bloom:[1,5,3,6,7,5,8], cat:'song', shipped:'2026-02', links:['thomas'], layers:[1,1,1,1,1,1,1] },
-  { id:'song_square', name:'♫ Be There or Be Square', x:18, y:15, psi:0.618, bloom:[3,7,5,5,8,5,7], cat:'song', shipped:'2026-05', links:['thomas'], layers:[1,1,1,1,1,1,1] },
-  { id:'song_gerald', name:'♫ Gerald', x:17, y:15, psi:0.618, bloom:[3,6,4,7,8,6,5], cat:'song', shipped:'2026-05', links:['thomas'], layers:[1,1,1,1,1,1,1] },
-  { id:'song_sadv', name:'♫ SAD-V', x:18, y:11, psi:0.618, bloom:[4,8,5,4,7,6,7], cat:'song', shipped:'2026-04', links:['thomas'], layers:[1,1,1,1,1,1,1] },
-  { id:'song_mouth', name:'♫ MOUTH MACHINE', x:17, y:6, psi:0.618, bloom:[5,7,6,6,8,4,5], cat:'song', shipped:'2026-03', links:['thomas'], layers:[1,1,1,1,1,1,1] },
-  { id:'song_crown', name:'♫ Crown of Primes', x:18, y:14, psi:0.618, bloom:[3,7,4,6,8,5,7], cat:'song', shipped:'2026-05', links:['thomas'], layers:[1,1,1,1,1,1,1] },
 
   // META — the board itself
   { id:'fallgo', name:'FallGo · ◊', x:19, y:13, psi:0.60, bloom:[3,5,5,4,7,8,8], cat:'meta', shipped:'2026-05', links:['simon','ainative'], layers:[1,1,1,1,1,1,1] },
@@ -719,16 +709,6 @@ const LINKS = {
   // People
   simon:          { ext: 'https://linkedin.com/in/simon-gant', extLabel: 'LinkedIn' },
   thomas:         { ext: 'https://youtube.com/@ThomasTheSolarCryptoEngine', extLabel: 'YouTube · 290 songs' },
-
-  // Songs
-  song_prime:     { ext: 'https://youtube.com/@ThomasTheSolarCryptoEngine', extLabel: 'Thomas · YouTube' },
-  song_brim:      { ext: 'https://youtube.com/@ThomasTheSolarCryptoEngine', extLabel: 'Thomas · YouTube' },
-  song_zero:      { ext: 'https://youtube.com/@ThomasTheSolarCryptoEngine', extLabel: 'Thomas · YouTube' },
-  song_square:    { ext: 'https://youtube.com/@ThomasTheSolarCryptoEngine', extLabel: 'Thomas · YouTube' },
-  song_gerald:    { ext: 'https://youtube.com/@ThomasTheSolarCryptoEngine', extLabel: 'Thomas · YouTube' },
-  song_sadv:      { ext: 'https://youtube.com/@ThomasTheSolarCryptoEngine', extLabel: 'Thomas · YouTube' },
-  song_mouth:     { ext: 'https://youtube.com/@ThomasTheSolarCryptoEngine', extLabel: 'Thomas · YouTube' },
-  song_crown:     { ext: 'https://youtube.com/@ThomasTheSolarCryptoEngine', extLabel: 'Thomas · YouTube' },
 };
 
 const CAT_COLORS = {
