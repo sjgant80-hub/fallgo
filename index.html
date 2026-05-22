@@ -696,7 +696,14 @@ const DEFAULT_STONES = [
   { id:'trilogyforge', name:'Trilogy Forge', x:11, y:6, psi:0.58, bloom:[4,6,6,5,5,6,4], cat:'pipeline', shipped:'2026-05', links:['trilogyfw'], layers:[1,1,1,0,1,1,0] },
   { id:'fallcubeapi', name:'FallCube API', x:10, y:5, psi:0.60, bloom:[6,5,7,3,5,4,3], cat:'pipeline', shipped:'2026-05', links:['docmindapi','deepapi','fluxapi'], layers:[1,1,1,0,1,1,1] },
 
-  // META — the board itself
+  // PRODUCTIVITY — additional
+  { id:'fallsalescrm', name:'FallSalesCRM', x:2, y:11, psi:0.55, bloom:[4,5,7,5,6,4,3], cat:'productivity', shipped:'2026-04', links:['fallforce'], layers:[1,0,1,0,1,1,0] },
+  { id:'gymos', name:'GymOS', x:3, y:16, psi:0.58, bloom:[5,6,6,5,7,5,4], cat:'productivity', shipped:'2026-05', links:['smbaios'], layers:[1,1,1,0,1,1,1] },
+
+  // META — early builds + the board itself
+  { id:'groundlevel', name:'GroundLevel', x:18, y:15, psi:0.40, bloom:[3,4,5,4,4,3,3], cat:'meta', shipped:'2026-02', links:['groundlevelmvp'], layers:[0,0,0,0,0,0,0] },
+  { id:'groundlevelmvp', name:'GroundLevel MVP', x:17, y:15, psi:0.42, bloom:[4,5,5,4,5,4,3], cat:'meta', shipped:'2026-02', links:['groundlevel'], layers:[1,0,1,0,0,0,0] },
+  { id:'superbarnacle', name:'Super Barnacle', x:18, y:11, psi:0.40, bloom:[5,4,4,3,3,4,5], cat:'meta', shipped:'2026-01', links:[], layers:[0,0,0,0,0,0,0] },
   { id:'fallgo', name:'FallGo · ◊', x:19, y:13, psi:0.60, bloom:[3,5,5,4,7,8,8], cat:'meta', shipped:'2026-05', links:['simon','ainative'], layers:[1,1,1,1,1,1,1] },
 ];
 
@@ -706,11 +713,11 @@ const LINKS = {
   // Sovereign tools — live + repo
   fallforce:      { live: 'https://sjgant80-hub.github.io/fallforce/',       repo: 'https://github.com/sjgant80-hub/fallforce' },
   falloffice:     { live: 'https://sjgant80-hub.github.io/falloffice/',      repo: 'https://github.com/sjgant80-hub/falloffice' },
-  fallaccount:    { live: 'https://sjgant80-hub.github.io/ai-nativesolutions/' },
+  fallaccount:    { live: 'https://sjgant80-hub.github.io/fallaccount/',       repo: 'https://github.com/sjgant80-hub/fallaccount' },
   falllearn:      { live: 'https://sjgant80-hub.github.io/falllearn/',       repo: 'https://github.com/sjgant80-hub/falllearn' },
   fallcube:       { repo: 'https://github.com/sjgant80-hub/fallcube' },
   fallcall:       { live: 'https://sjgant80-hub.github.io/fallcall/',        repo: 'https://github.com/sjgant80-hub/fallcall' },
-  exitengine:     { repo: 'https://github.com/sjgant80-hub/exitengine' },
+  exitengine:     { live: 'https://sjgant80-hub.github.io/exitengine/',       repo: 'https://github.com/sjgant80-hub/exitengine' },
   smbaios:        { live: 'https://sjgant80-hub.github.io/smbaios/',         repo: 'https://github.com/sjgant80-hub/smbaios' },
   fallsignal:     { live: 'https://sjgant80-hub.github.io/fallsignal/',      repo: 'https://github.com/sjgant80-hub/fallsignal' },
   fallforensics:  { live: 'https://sjgant80-hub.github.io/fallforensics/',   repo: 'https://github.com/sjgant80-hub/fallforensics' },
@@ -720,6 +727,12 @@ const LINKS = {
   falllead:       { live: 'https://sjgant80-hub.github.io/falllead/',        repo: 'https://github.com/sjgant80-hub/falllead' },
   fallgrade:      { live: 'https://sjgant80-hub.github.io/fallgrade/',       repo: 'https://github.com/sjgant80-hub/fallgrade' },
   tonesmith:      { repo: 'https://github.com/sjgant80-hub/tonesmith' },
+
+  fallsalescrm:   { repo: 'https://github.com/sjgant80-hub/fallsalescrm' },
+  gymos:          { live: 'https://sjgant80-hub.github.io/gymos/',           repo: 'https://github.com/sjgant80-hub/gymos' },
+  groundlevel:    { repo: 'https://github.com/sjgant80-hub/groundlevel' },
+  groundlevelmvp: { repo: 'https://github.com/sjgant80-hub/groundlevel-mvp' },
+  superbarnacle:  { repo: 'https://github.com/sjgant80-hub/super-barnacle' },
 
   // Identity / hub
   ainative:       { live: 'https://sjgant80-hub.github.io/ai-nativesolutions/', repo: 'https://github.com/sjgant80-hub/ai-nativesolutions' },
