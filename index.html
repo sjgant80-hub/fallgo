@@ -431,6 +431,20 @@ body.light .legend { background: rgba(232,227,216,0.9); border-color: rgba(0,0,0
   }
   .detail-panel.open { right: 14px; bottom: 80px; }
 }
+.konomi-badge {
+  position: fixed;
+  bottom: 56px; right: 14px;
+  z-index: 8;
+  font-family: var(--font-mono);
+  font-size: 8px;
+  color: var(--muted);
+  text-align: right;
+  line-height: 1.6;
+  opacity: 0.55;
+}
+.konomi-badge:hover { opacity: 1; }
+.konomi-badge a { color: var(--accent); text-decoration: none; }
+.konomi-badge a:hover { text-decoration: underline; }
 </style>
 </head>
 <body>
@@ -460,6 +474,7 @@ body.light .legend { background: rgba(232,227,216,0.9); border-color: rgba(0,0,0
     <div class="top-right-row">
       <a class="icon-btn" href="https://github.com/sjgant80-hub" target="_blank" rel="noopener" title="portfolio · github.com/sjgant80-hub" style="text-decoration:none">GH</a>
       <a class="icon-btn" href="https://sjgant80-hub.github.io/ai-nativesolutions/" target="_blank" rel="noopener" title="ai-nativesolutions.com · the hub" style="text-decoration:none">HUB</a>
+      <a class="icon-btn" href="https://sjgant80-hub.github.io/fallmesh/" target="_blank" rel="noopener" title="FallMesh · sovereign mesh protocol" style="text-decoration:none">◊</a>
       <button class="icon-btn" id="legend-btn" title="legend">i</button>
       <button class="icon-btn" id="add-btn" title="add stone">+</button>
       <button class="icon-btn" id="export-btn" title="export">↓</button>
@@ -476,6 +491,12 @@ body.light .legend { background: rgba(232,227,216,0.9); border-color: rgba(0,0,0
   <input type="range" id="time-slider" min="0" max="100" value="100" orient="vertical">
   <span class="time-value" id="time-val">now</span>
   <button class="icon-btn" id="time-play" title="auto-sweep time">▶</button>
+</div>
+
+<!-- Konomi + ACG branding -->
+<div class="konomi-badge">
+  ◊ POWERED BY KONOMI ARCHITECTURE · φ·κ=1<br>
+  <a href="https://aicraftspeopleguild.github.io/" target="_blank" rel="noopener">⚒ Member of the AI Craftspeople Guild</a>
 </div>
 
 <!-- Psi slider -->
@@ -556,6 +577,7 @@ body.light .legend { background: rgba(232,227,216,0.9); border-color: rgba(0,0,0
       <option value="person">person</option>
       <option value="song">song</option>
       <option value="meta">meta</option>
+      <option value="pipeline">pipeline</option>
     </select>
     <label>Ψ (0.000 – 1.000)</label>
     <input type="number" id="m-psi" min="0" max="1" step="0.01" value="0.618">
@@ -649,6 +671,7 @@ const DEFAULT_STONES = [
   { id:'fallrecruit', name:'FallRecruit', x:15, y:6, psi:0.30, bloom:[5,5,5,4,4,4,5], cat:'infrastructure', shipped:null, links:['fallwatch','fallmirror','fall127'], layers:[0,0,0,0,0,0,0] },
   { id:'fallmirror', name:'FallMirror', x:16, y:6, psi:0.30, bloom:[5,5,5,4,4,4,5], cat:'infrastructure', shipped:null, links:['fallwatch','fallrecruit','fall127'], layers:[0,0,0,0,0,0,0] },
   { id:'fall127', name:'Fall127 Agents', x:15, y:8, psi:0.50, bloom:[4,9,5,4,8,5,7], cat:'infrastructure', shipped:'2026-05', links:['fallwatch','fallrecruit','fallmirror'], layers:[1,1,1,0,1,0,0] },
+  { id:'fallmesh', name:'FallMesh', x:14, y:10, psi:0.60, bloom:[4,6,5,4,5,8,7], cat:'infrastructure', shipped:'2026-05', links:['ainative','fall127','docmindapi','fallcubeapi'], layers:[1,1,1,1,1,1,1] },
 
   // RESEARCH / PRIOR ART (x: 17-18)
   { id:'thrl', name:'THRL · Toroidal Harmonic', x:17, y:14, psi:0.48, bloom:[9,6,4,3,7,3,4], cat:'meta', shipped:'2026-04', links:['kbraid'], layers:[0,0,0,0,0,0,0] },
@@ -662,6 +685,15 @@ const DEFAULT_STONES = [
   // PEOPLE (x: 19)
   { id:'simon', name:'Simon · κ₀', x:19, y:10, psi:0.618, bloom:[4,7,7,6,5,4,3], cat:'person', shipped:null, links:['thomas','ainative','fallforce','falllearn','fallgo'], layers:[1,1,1,1,1,1,1] },
   { id:'thomas', name:'Thomas · κ₂', x:19, y:11, psi:0.618, bloom:[2,8,3,7,15,6,12], cat:'person', shipped:null, links:['simon','bigcassie'], layers:[1,1,1,1,1,1,1] },
+
+  // PIPELINE — Trilogy nested torus (DocMind → Deep → Flux + SDK/Framework/Forge/Cube)
+  { id:'docmindapi', name:'DocMind API', x:9, y:4, psi:0.60, bloom:[4,8,7,3,7,4,5], cat:'pipeline', shipped:'2026-05', links:['deepapi','fallcubeapi'], layers:[1,1,1,0,1,1,1] },
+  { id:'deepapi', name:'Deep API', x:10, y:4, psi:0.61, bloom:[3,9,8,4,6,3,6], cat:'pipeline', shipped:'2026-05', links:['docmindapi','fluxapi','fallcubeapi'], layers:[1,1,1,0,1,1,1] },
+  { id:'fluxapi', name:'Flux API', x:11, y:4, psi:0.59, bloom:[3,7,8,5,8,4,5], cat:'pipeline', shipped:'2026-05', links:['deepapi','fallcubeapi'], layers:[1,1,1,0,1,1,1] },
+  { id:'trilogysdk', name:'Trilogy SDK', x:9, y:6, psi:0.58, bloom:[5,6,6,4,5,5,4], cat:'pipeline', shipped:'2026-05', links:['trilogyfw'], layers:[1,1,1,0,1,1,0] },
+  { id:'trilogyfw', name:'Trilogy Framework', x:10, y:6, psi:0.59, bloom:[5,5,7,4,6,5,4], cat:'pipeline', shipped:'2026-05', links:['trilogysdk','trilogyforge'], layers:[1,1,1,0,1,1,0] },
+  { id:'trilogyforge', name:'Trilogy Forge', x:11, y:6, psi:0.58, bloom:[4,6,6,5,5,6,4], cat:'pipeline', shipped:'2026-05', links:['trilogyfw'], layers:[1,1,1,0,1,1,0] },
+  { id:'fallcubeapi', name:'FallCube API', x:10, y:5, psi:0.60, bloom:[6,5,7,3,5,4,3], cat:'pipeline', shipped:'2026-05', links:['docmindapi','deepapi','fluxapi'], layers:[1,1,1,0,1,1,1] },
 
   // META — the board itself
   { id:'fallgo', name:'FallGo · ◊', x:19, y:13, psi:0.60, bloom:[3,5,5,4,7,8,8], cat:'meta', shipped:'2026-05', links:['simon','ainative'], layers:[1,1,1,1,1,1,1] },
@@ -693,6 +725,7 @@ const LINKS = {
   // Infrastructure / solver / agents
   cassietorus:    { live: 'https://sjgant80-hub.github.io/cassietorusbtc135solver/', repo: 'https://github.com/sjgant80-hub/cassietorusbtc135solver' },
   fall127:        { live: 'https://sjgant80-hub.github.io/fall127agents/',   repo: 'https://github.com/sjgant80-hub/fall127agents' },
+  fallmesh:       { live: 'https://sjgant80-hub.github.io/fallmesh/',        repo: 'https://github.com/sjgant80-hub/fallmesh' },
 
   // Research / prior art
   thrl:           { repo: 'https://github.com/sjgant80-hub/fuzzy-palm-tree', ext: 'https://github.com/sjgant80-hub/legendary-journey', extLabel: 'THRL · prior art' },
@@ -702,6 +735,15 @@ const LINKS = {
   policyphi:      { repo: 'https://github.com/sjgant80-hub/upgraded-fiesta' },
   mesh127:        { repo: 'https://github.com/sjgant80-hub/laughing-octo-guacamole' },
   kbraid:         { repo: 'https://github.com/sjgant80-hub/kinetic-braid-prior-art' },
+
+  // Pipeline — Trilogy nested torus
+  docmindapi:     { live: 'https://sjgant80-hub.github.io/docmind-api/',     repo: 'https://github.com/sjgant80-hub/docmind-api' },
+  deepapi:        { live: 'https://sjgant80-hub.github.io/deep-api/',        repo: 'https://github.com/sjgant80-hub/deep-api' },
+  fluxapi:        { live: 'https://sjgant80-hub.github.io/flux-api/',        repo: 'https://github.com/sjgant80-hub/flux-api' },
+  trilogysdk:     { live: 'https://sjgant80-hub.github.io/trilogy-sdk/',     repo: 'https://github.com/sjgant80-hub/trilogy-sdk' },
+  trilogyfw:      { live: 'https://sjgant80-hub.github.io/trilogy-framework/', repo: 'https://github.com/sjgant80-hub/trilogy-framework' },
+  trilogyforge:   { live: 'https://sjgant80-hub.github.io/trilogy-forge/',   repo: 'https://github.com/sjgant80-hub/trilogy-forge' },
+  fallcubeapi:    { live: 'https://sjgant80-hub.github.io/fallcube-api/',    repo: 'https://github.com/sjgant80-hub/fallcube-api' },
 
   // Board itself
   fallgo:         { live: 'https://sjgant80-hub.github.io/fallgo/',          repo: 'https://github.com/sjgant80-hub/fallgo' },
@@ -719,6 +761,7 @@ const CAT_COLORS = {
   person: 0xb08a3e,
   song: 0xAA44FF,
   meta: 0x44AA44,
+  pipeline: 0x00CEC9,
 };
 
 /* ◊ STATE — load from localStorage if present */
