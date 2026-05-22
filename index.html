@@ -650,6 +650,7 @@ const DEFAULT_STONES = [
   // INTELLIGENCE (x: 5-9)
   { id:'fallsignal', name:'FallSignal', x:5, y:12, psi:0.58, bloom:[3,9,7,4,5,3,5], cat:'intelligence', shipped:'2026-04', links:['fallforensics'], layers:[1,0,1,0,1,1,1] },
   { id:'fallforensics', name:'FallForensics', x:6, y:12, psi:0.58, bloom:[3,8,7,4,6,4,6], cat:'intelligence', shipped:'2026-04', links:['fallsignal'], layers:[1,0,1,0,1,1,1] },
+  { id:'fallscout', name:'FallScout', x:6, y:9, psi:0.60, bloom:[3,8,7,5,7,4,5], cat:'intelligence', shipped:'2026-05', links:['falllead','fallforce'], layers:[1,1,1,0,1,1,1] },
   { id:'oracleengine', name:'OracleEngine', x:7, y:13, psi:0.60, bloom:[4,7,5,5,5,6,8], cat:'intelligence', shipped:'2026-05', links:[], layers:[1,1,1,1,1,1,1] },
   { id:'shadowengine', name:'ShadowEngine', x:8, y:8, psi:0.52, bloom:[3,5,4,8,6,7,6], cat:'intelligence', shipped:'2026-03', links:['sididy'], layers:[1,1,1,1,0,1,0] },
   { id:'fallconsensus', name:'FallConsensus', x:9, y:13, psi:0.59, bloom:[4,5,6,6,5,5,7], cat:'intelligence', shipped:'2026-05', links:[], layers:[1,1,1,0,1,1,1] },
@@ -713,6 +714,7 @@ const LINKS = {
   smbaios:        { live: 'https://sjgant80-hub.github.io/smbaios/',         repo: 'https://github.com/sjgant80-hub/smbaios' },
   fallsignal:     { live: 'https://sjgant80-hub.github.io/fallsignal/',      repo: 'https://github.com/sjgant80-hub/fallsignal' },
   fallforensics:  { live: 'https://sjgant80-hub.github.io/fallforensics/',   repo: 'https://github.com/sjgant80-hub/fallforensics' },
+  fallscout:      { live: 'https://sjgant80-hub.github.io/fallscout/',      repo: 'https://github.com/sjgant80-hub/fallscout' },
   oracleengine:   { live: 'https://sjgant80-hub.github.io/oracleengine/',    repo: 'https://github.com/sjgant80-hub/oracleengine' },
   fallconsensus:  { live: 'https://sjgant80-hub.github.io/fallconsensus/',   repo: 'https://github.com/sjgant80-hub/fallconsensus' },
   falllead:       { live: 'https://sjgant80-hub.github.io/falllead/',        repo: 'https://github.com/sjgant80-hub/falllead' },
