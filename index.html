@@ -693,7 +693,8 @@ const DEFAULT_STONES = [
   { id:'fluxapi', name:'Flux API', x:11, y:4, psi:0.59, bloom:[3,7,8,5,8,4,5], cat:'pipeline', shipped:'2026-05', links:['deepapi','fallcubeapi'], layers:[1,1,1,0,1,1,1] },
   { id:'trilogysdk', name:'Trilogy SDK', x:9, y:6, psi:0.58, bloom:[5,6,6,4,5,5,4], cat:'pipeline', shipped:'2026-05', links:['trilogyfw'], layers:[1,1,1,0,1,1,0] },
   { id:'trilogyfw', name:'Trilogy Framework', x:10, y:6, psi:0.59, bloom:[5,5,7,4,6,5,4], cat:'pipeline', shipped:'2026-05', links:['trilogysdk','trilogyforge'], layers:[1,1,1,0,1,1,0] },
-  { id:'trilogyforge', name:'Trilogy Forge', x:11, y:6, psi:0.58, bloom:[4,6,6,5,5,6,4], cat:'pipeline', shipped:'2026-05', links:['trilogyfw'], layers:[1,1,1,0,1,1,0] },
+  { id:'trilogyforge', name:'Trilogy Forge', x:11, y:6, psi:0.58, bloom:[4,6,6,5,5,6,4], cat:'pipeline', shipped:'2026-05', links:['trilogyfw','forgeupgrade'], layers:[1,1,1,0,1,1,0] },
+  { id:'forgeupgrade', name:'Forge Upgrade · the torus that eats the old web', x:12, y:6, psi:0.62, bloom:[4,7,8,5,8,4,7], cat:'pipeline', shipped:'2026-05', links:['trilogyforge','trilogyfw','fallmesh','simon'], layers:[1,1,1,1,1,1,1] },
   { id:'fallcubeapi', name:'FallCube API', x:10, y:5, psi:0.60, bloom:[6,5,7,3,5,4,3], cat:'pipeline', shipped:'2026-05', links:['docmindapi','deepapi','fluxapi'], layers:[1,1,1,0,1,1,1] },
 
   // PRODUCTIVITY — additional
@@ -764,6 +765,7 @@ const LINKS = {
   trilogysdk:     { live: 'https://sjgant80-hub.github.io/trilogy-sdk/',     repo: 'https://github.com/sjgant80-hub/trilogy-sdk' },
   trilogyfw:      { live: 'https://sjgant80-hub.github.io/trilogy-framework/', repo: 'https://github.com/sjgant80-hub/trilogy-framework' },
   trilogyforge:   { live: 'https://sjgant80-hub.github.io/trilogy-forge/',   repo: 'https://github.com/sjgant80-hub/trilogy-forge' },
+  forgeupgrade:   { live: 'https://sjgant80-hub.github.io/forge-upgrade/',   repo: 'https://github.com/sjgant80-hub/forge-upgrade' },
   fallcubeapi:    { live: 'https://sjgant80-hub.github.io/fallcube-api/',    repo: 'https://github.com/sjgant80-hub/fallcube-api' },
 
   // Board itself
