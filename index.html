@@ -489,22 +489,19 @@ body.light .legend { background: rgba(232,227,216,0.9); border-color: rgba(0,0,0
     'llama-3b':  { id: 'Llama-3.2-3B-Instruct-q4f16_1-MLC',   size: '~2GB',   label: '3B · balanced · default · most laptops' },
     'qwen-7b':   { id: 'Qwen2.5-7B-Instruct-q4f16_1-MLC',     size: '~5GB',   label: '7B · capable · needs decent GPU (M-series Mac / 8GB+ VRAM)' },
     'llama-8b':  { id: 'Llama-3.1-8B-Instruct-q4f16_1-MLC',   size: '~5GB',   label: '8B · common · needs decent GPU' },
-    'llama-70b': { id: 'Llama-3.1-70B-Instruct-q4f16_1-MLC',  size: '~40GB',  label: '70B · frontier · needs serious GPU + 64GB+ RAM' },
-  };
+    'llama-70b': { id: 'Llama-3.1-70B-Instruct-q4f16_1-MLC',  size: '~40GB',  label: '70B · frontier · needs serious GPU + 64GB+ RAM' }};
   const DEFAULT_MODEL = 'llama-3b';
 
   const T3_PROVIDERS = {
     anthropic: { label: 'Anthropic Claude', models: ['claude-sonnet-4-5','claude-opus-4-7','claude-haiku-4-5'], default: 'claude-sonnet-4-5', url: 'https://api.anthropic.com/v1/messages' },
     openai:    { label: 'OpenAI',           models: ['gpt-4o','gpt-4o-mini','o1-mini'],                          default: 'gpt-4o-mini',      url: 'https://api.openai.com/v1/chat/completions' },
-    google:    { label: 'Google Gemini',    models: ['gemini-1.5-pro','gemini-1.5-flash','gemini-2.0-flash-exp'], default: 'gemini-1.5-flash', url: 'https://generativelanguage.googleapis.com/v1beta/models/' },
-  };
+    google:    { label: 'Google Gemini',    models: ['gemini-1.5-pro','gemini-1.5-flash','gemini-2.0-flash-exp'], default: 'gemini-1.5-flash', url: 'https://generativelanguage.googleapis.com/v1beta/models/' }};
 
   // ─── State ───────────────────────────────────────────────────────
   const STATE = {
     config: loadConfig(),
     ai: { ready: false, loading: false, progress: 0, engine: null, model: null },
-    mesh: { active: false, peers: new Map(), bc: null, signal: null },
-  };
+    mesh: { active: false, peers: new Map(), bc: null, signal: null }};
 
   function loadConfig() {
     try { return JSON.parse(localStorage.getItem('fall-kit.config') || '{}'); }
@@ -571,8 +568,7 @@ body.light .legend { background: rgba(232,227,216,0.9); border-color: rgba(0,0,0
     if (tier === 'T2' && STATE.ai.ready && STATE.ai.engine) {
       const r = await STATE.ai.engine.chat.completions.create({
         messages: [{ role: 'system', content: systemPrompt }, { role: 'user', content: userMsg }],
-        max_tokens: maxTokens,
-      });
+        max_tokens: maxTokens});
       return r.choices[0].message.content;
     }
     if (tier === 'T3' && STATE.config.api_key && STATE.config.api_provider) {
@@ -589,8 +585,7 @@ body.light .legend { background: rgba(232,227,216,0.9); border-color: rgba(0,0,0
       const r = await fetch(T3_PROVIDERS.anthropic.url, {
         method: 'POST',
         headers: { 'content-type': 'application/json', 'x-api-key': key, 'anthropic-version': '2023-06-01' },
-        body: JSON.stringify({ model, max_tokens: maxTokens, system: sys, messages: [{ role: 'user', content: msg }] }),
-      });
+        body: JSON.stringify({ model, max_tokens: maxTokens, system: sys, messages: [{ role: 'user', content: msg }] })});
       if (!r.ok) throw new Error('Anthropic ' + r.status + ': ' + (await r.text()).slice(0, 200));
       const j = await r.json();
       return j.content[0].text;
@@ -599,8 +594,7 @@ body.light .legend { background: rgba(232,227,216,0.9); border-color: rgba(0,0,0
       const r = await fetch(T3_PROVIDERS.openai.url, {
         method: 'POST',
         headers: { 'content-type': 'application/json', 'Authorization': 'Bearer ' + key },
-        body: JSON.stringify({ model, max_tokens: maxTokens, messages: [{ role: 'system', content: sys }, { role: 'user', content: msg }] }),
-      });
+        body: JSON.stringify({ model, max_tokens: maxTokens, messages: [{ role: 'system', content: sys }, { role: 'user', content: msg }] })});
       if (!r.ok) throw new Error('OpenAI ' + r.status);
       const j = await r.json();
       return j.choices[0].message.content;
@@ -609,8 +603,7 @@ body.light .legend { background: rgba(232,227,216,0.9); border-color: rgba(0,0,0
       const r = await fetch(T3_PROVIDERS.google.url + model + ':generateContent?key=' + encodeURIComponent(key), {
         method: 'POST',
         headers: { 'content-type': 'application/json' },
-        body: JSON.stringify({ contents: [{ role: 'user', parts: [{ text: sys + '\n\n---\n\n' + msg }] }], generationConfig: { maxOutputTokens: maxTokens } }),
-      });
+        body: JSON.stringify({ contents: [{ role: 'user', parts: [{ text: sys + '\n\n---\n\n' + msg }] }], generationConfig: { maxOutputTokens: maxTokens } })});
       if (!r.ok) throw new Error('Google ' + r.status);
       const j = await r.json();
       return j.candidates[0].content.parts[0].text;
@@ -851,8 +844,7 @@ body.light .legend { background: rgba(232,227,216,0.9); border-color: rgba(0,0,0
     openMint: openMint,  // v1.2 · launch kcc-mint with this seed prefilled as parent
     MODELS: WEBLLM_MODELS,
     PROVIDERS: T3_PROVIDERS,
-    state: STATE,
-  };
+    state: STATE};
 })(typeof window !== 'undefined' ? window : globalThis);
 
 </script>
@@ -1129,8 +1121,7 @@ const DEFAULT_STONES = [
   { id:'groundlevel', name:'GroundLevel', x:18, y:15, psi:0.40, bloom:[3,4,5,4,4,3,3], cat:'meta', shipped:'2026-02', links:['groundlevelmvp'], layers:[0,0,0,0,0,0,0] },
   { id:'groundlevelmvp', name:'GroundLevel MVP', x:17, y:15, psi:0.42, bloom:[4,5,5,4,5,4,3], cat:'meta', shipped:'2026-02', links:['groundlevel'], layers:[1,0,1,0,0,0,0] },
   { id:'superbarnacle', name:'Super Barnacle', x:18, y:11, psi:0.40, bloom:[5,4,4,3,3,4,5], cat:'meta', shipped:'2026-01', links:[], layers:[0,0,0,0,0,0,0] },
-  { id:'fallgo', name:'FallGo · ◊', x:19, y:13, psi:0.60, bloom:[3,5,5,4,7,8,8], cat:'meta', shipped:'2026-05', links:['simon','ainative'], layers:[1,1,1,1,1,1,1] },
-];
+  { id:'fallgo', name:'FallGo · ◊', x:19, y:13, psi:0.60, bloom:[3,5,5,4,7,8,8], cat:'meta', shipped:'2026-05', links:['simon','ainative'], layers:[1,1,1,1,1,1,1] }];
 
 /* ◊ LINKS — every confirmed repo + live Pages URL */
 const GH_ORG = 'https://github.com/sjgant80-hub';
@@ -1196,8 +1187,7 @@ const LINKS = {
 
   // People
   simon:          { ext: 'https://linkedin.com/in/simon-gant', extLabel: 'LinkedIn' },
-  thomas:         { ext: 'https://youtube.com/@ThomasTheSolarCryptoEngine', extLabel: 'YouTube · 290 songs' },
-};
+  thomas:         { ext: 'https://youtube.com/@ThomasTheSolarCryptoEngine', extLabel: 'YouTube · 290 songs' }};
 
 const CAT_COLORS = {
   productivity: 0xc8371a,
@@ -1207,8 +1197,7 @@ const CAT_COLORS = {
   person: 0xb08a3e,
   song: 0xAA44FF,
   meta: 0x44AA44,
-  pipeline: 0x00CEC9,
-};
+  pipeline: 0x00CEC9};
 
 /* ◊ STATE — load from localStorage if present */
 let STONES = loadStones();
@@ -1338,8 +1327,7 @@ const skinMat = new THREE.MeshStandardMaterial({
   roughness: 0.95,
   metalness: 0.05,
   side: THREE.DoubleSide,
-  flatShading: false,
-});
+  flatShading: false});
 const skin = new THREE.Mesh(skinGeo, skinMat);
 skin.rotation.x = Math.PI / 2;
 torusGroup.add(skin);
@@ -1348,13 +1336,11 @@ torusGroup.add(skin);
 const lineMat = new THREE.LineBasicMaterial({
   color: theme === 'light' ? 0x6a6660 : 0x2a2a25,
   transparent: true,
-  opacity: 0.35,
-});
+  opacity: 0.35});
 const spineMat = new THREE.LineBasicMaterial({
   color: 0xb08a3e,
   transparent: true,
-  opacity: 0.55,
-});
+  opacity: 0.55});
 
 function buildGridLine(uFixed, vFixed, segments = 96) {
   const pts = [];
@@ -1422,8 +1408,7 @@ function makeStone(s) {
     transparent: true,
     opacity: psiToOpacity(s.psi, currentPsi),
     clearcoat: 0.5,
-    clearcoatRoughness: 0.2,
-  });
+    clearcoatRoughness: 0.2});
   const mesh = new THREE.Mesh(geo, mat);
   mesh.position.copy(stonePos(s));
   mesh.userData = s;
@@ -1439,8 +1424,7 @@ function makeStone(s) {
     transparent: true,
     opacity: 0.18,
     blending: THREE.AdditiveBlending,
-    depthWrite: false,
-  });
+    depthWrite: false});
   const sprite = new THREE.Sprite(spriteMat);
   sprite.scale.set(1.6, 1.6, 1);
   sprite.position.copy(mesh.position);
@@ -1457,8 +1441,7 @@ function makeStone(s) {
     const rMat = new THREE.MeshBasicMaterial({
       color: RING_COLORS[i],
       transparent: true,
-      opacity: lit ? 0.95 : 0.18,
-    });
+      opacity: lit ? 0.95 : 0.18});
     const ring = new THREE.Mesh(rGeo, rMat);
     // orient ring to face camera direction approximately — we'll update each frame
     ringGroup.add(ring);
@@ -1504,8 +1487,7 @@ function buildConnections() {
       const mat = new THREE.LineBasicMaterial({
         color: colorHex,
         transparent: true,
-        opacity: 0.22,
-      });
+        opacity: 0.22});
       const line = new THREE.Line(geo, mat);
       connGroup.add(line);
       connections.push({ line, source: s.id, target: targetId, sourceMesh: source, targetMesh: target });
@@ -1555,8 +1537,7 @@ function buildParticles() {
         normal: normal.clone(),
         speed: 0.005 + Math.random() * 0.012,
         life: Math.random(),
-        stoneIdx: si,
-      });
+        stoneIdx: si});
       idx++;
     }
   });
@@ -1568,8 +1549,7 @@ function buildParticles() {
     transparent: true,
     opacity: 0.55,
     blending: THREE.AdditiveBlending,
-    depthWrite: false,
-  });
+    depthWrite: false});
   particleSystem = new THREE.Points(geo, mat);
   scene.add(particleSystem);
 }
@@ -1968,8 +1948,7 @@ document.getElementById('m-save').addEventListener('click', () => {
     bloom: [0,1,2,3,4,5,6].map(i => parseInt(document.getElementById('b'+i).value, 10) || 0),
     links: document.getElementById('m-links').value.split(',').map(s => s.trim()).filter(Boolean),
     shipped: null,
-    layers: [0,0,0,0,0,0,0],
-  };
+    layers: [0,0,0,0,0,0,0]};
   STONES.push(stone);
   saveStones();
   buildAllStones();

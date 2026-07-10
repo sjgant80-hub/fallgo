@@ -664,8 +664,7 @@ const DEFAULT_STONES = [
   { id:'thomas', name:'Thomas · κ₂', x:19, y:11, psi:0.618, bloom:[2,8,3,7,15,6,12], cat:'person', shipped:null, links:['simon','bigcassie'], layers:[1,1,1,1,1,1,1] },
 
   // META — the board itself
-  { id:'fallgo', name:'FallGo · ◊', x:19, y:13, psi:0.60, bloom:[3,5,5,4,7,8,8], cat:'meta', shipped:'2026-05', links:['simon','ainative'], layers:[1,1,1,1,1,1,1] },
-];
+  { id:'fallgo', name:'FallGo · ◊', x:19, y:13, psi:0.60, bloom:[3,5,5,4,7,8,8], cat:'meta', shipped:'2026-05', links:['simon','ainative'], layers:[1,1,1,1,1,1,1] }];
 
 /* ◊ LINKS — every confirmed repo + live Pages URL */
 const GH_ORG = 'https://github.com/sjgant80-hub';
@@ -708,8 +707,7 @@ const LINKS = {
 
   // People
   simon:          { ext: 'https://linkedin.com/in/simon-gant', extLabel: 'LinkedIn' },
-  thomas:         { ext: 'https://youtube.com/@ThomasTheSolarCryptoEngine', extLabel: 'YouTube · 290 songs' },
-};
+  thomas:         { ext: 'https://youtube.com/@ThomasTheSolarCryptoEngine', extLabel: 'YouTube · 290 songs' }};
 
 const CAT_COLORS = {
   productivity: 0xc8371a,
@@ -718,8 +716,7 @@ const CAT_COLORS = {
   infrastructure: 0xFFAA00,
   person: 0xb08a3e,
   song: 0xAA44FF,
-  meta: 0x44AA44,
-};
+  meta: 0x44AA44};
 
 /* ◊ STATE — load from localStorage if present */
 let STONES = loadStones();
@@ -849,8 +846,7 @@ const skinMat = new THREE.MeshStandardMaterial({
   roughness: 0.95,
   metalness: 0.05,
   side: THREE.DoubleSide,
-  flatShading: false,
-});
+  flatShading: false});
 const skin = new THREE.Mesh(skinGeo, skinMat);
 skin.rotation.x = Math.PI / 2;
 torusGroup.add(skin);
@@ -859,13 +855,11 @@ torusGroup.add(skin);
 const lineMat = new THREE.LineBasicMaterial({
   color: theme === 'light' ? 0x6a6660 : 0x2a2a25,
   transparent: true,
-  opacity: 0.35,
-});
+  opacity: 0.35});
 const spineMat = new THREE.LineBasicMaterial({
   color: 0xb08a3e,
   transparent: true,
-  opacity: 0.55,
-});
+  opacity: 0.55});
 
 function buildGridLine(uFixed, vFixed, segments = 96) {
   const pts = [];
@@ -933,8 +927,7 @@ function makeStone(s) {
     transparent: true,
     opacity: psiToOpacity(s.psi, currentPsi),
     clearcoat: 0.5,
-    clearcoatRoughness: 0.2,
-  });
+    clearcoatRoughness: 0.2});
   const mesh = new THREE.Mesh(geo, mat);
   mesh.position.copy(stonePos(s));
   mesh.userData = s;
@@ -950,8 +943,7 @@ function makeStone(s) {
     transparent: true,
     opacity: 0.18,
     blending: THREE.AdditiveBlending,
-    depthWrite: false,
-  });
+    depthWrite: false});
   const sprite = new THREE.Sprite(spriteMat);
   sprite.scale.set(1.6, 1.6, 1);
   sprite.position.copy(mesh.position);
@@ -968,8 +960,7 @@ function makeStone(s) {
     const rMat = new THREE.MeshBasicMaterial({
       color: RING_COLORS[i],
       transparent: true,
-      opacity: lit ? 0.95 : 0.18,
-    });
+      opacity: lit ? 0.95 : 0.18});
     const ring = new THREE.Mesh(rGeo, rMat);
     // orient ring to face camera direction approximately — we'll update each frame
     ringGroup.add(ring);
@@ -1015,8 +1006,7 @@ function buildConnections() {
       const mat = new THREE.LineBasicMaterial({
         color: colorHex,
         transparent: true,
-        opacity: 0.22,
-      });
+        opacity: 0.22});
       const line = new THREE.Line(geo, mat);
       connGroup.add(line);
       connections.push({ line, source: s.id, target: targetId, sourceMesh: source, targetMesh: target });
@@ -1066,8 +1056,7 @@ function buildParticles() {
         normal: normal.clone(),
         speed: 0.005 + Math.random() * 0.012,
         life: Math.random(),
-        stoneIdx: si,
-      });
+        stoneIdx: si});
       idx++;
     }
   });
@@ -1079,8 +1068,7 @@ function buildParticles() {
     transparent: true,
     opacity: 0.55,
     blending: THREE.AdditiveBlending,
-    depthWrite: false,
-  });
+    depthWrite: false});
   particleSystem = new THREE.Points(geo, mat);
   scene.add(particleSystem);
 }
@@ -1479,8 +1467,7 @@ document.getElementById('m-save').addEventListener('click', () => {
     bloom: [0,1,2,3,4,5,6].map(i => parseInt(document.getElementById('b'+i).value, 10) || 0),
     links: document.getElementById('m-links').value.split(',').map(s => s.trim()).filter(Boolean),
     shipped: null,
-    layers: [0,0,0,0,0,0,0],
-  };
+    layers: [0,0,0,0,0,0,0]};
   STONES.push(stone);
   saveStones();
   buildAllStones();
